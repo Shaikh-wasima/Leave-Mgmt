@@ -35,7 +35,7 @@ namespace Leave_Management.Models
         [Display(Name = "Employee Comments")]
         [MaxLength(300)]
         public string RequestComments { get; set; }
-        public int TotalDays => ;
+        public int TotalDays => (int)(EndDate - StartDate).TotalDays + 1;
 
     }
 
