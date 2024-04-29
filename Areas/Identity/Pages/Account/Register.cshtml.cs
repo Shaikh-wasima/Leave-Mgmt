@@ -42,13 +42,15 @@ namespace Leave_Management.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Please enter a valid email address. It must be in the format: example@example.com")]
+            [DataType(DataType.EmailAddress)]
+            [MaxLength(50)]
+            [RegularExpression(@"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}", ErrorMessage = "Incorrect Email Format")]
             public string Email { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+
+            [Required(ErrorMessage = "Password is required")]
+            [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$", ErrorMessage = "Password must contain at least one uppercase letter, one digit, one special character, and be at least 7 characters long")]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -59,10 +61,13 @@ namespace Leave_Management.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
             [Required]
             [DataType(DataType.Text)]
+            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
             [Display(Name = "First Name")]
             public string Firstname { get; set; }
             [Required]
             [DataType(DataType.Text)]
+            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+
             [Display(Name = "Last Name")]
             public string Lastname { get; set; }
             public string Discriminator { get; set; }

@@ -4,11 +4,13 @@
     ViewData["Title"] = "Create Employee";
 }
 
-<h1>Create Employee</h1>
-<hr />
+<h1 class="text-center">Create Employee</h1>
+<div class="d-flex justify-content-center">
 
-<div class="row">
-    <div class="col-md-4">
+    <hr class="w-25" />
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
         <form asp-action="CreateEmployee" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
