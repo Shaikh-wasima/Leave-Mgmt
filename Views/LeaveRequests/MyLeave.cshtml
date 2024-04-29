@@ -14,18 +14,30 @@
 
 <h1>My Leave Allocation</h1>
 
-<div class="jumbotron">
+<div class="jumbotron mx-auto">
     <div class="card">
-        <ul class="list-group list-group-flush">
-            @foreach (var item in Model.LeaveAllocations)
-            {
-                <li class="list-group-item">
-                    <h6>@item.LeaveType.Name <span class="badge badge-secondary">@item.NumberOfDays</span></h6>
-                </li>
-            }
-        </ul>
+        <div class="table-responsive">
+            <table class="table rounded">
+                <thead>
+                    <tr>
+                        <th scope="col">Leave Type</th>
+                        <th scope="col">Number of Days</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LeaveAllocations)
+                    {
+                        <tr>
+                            <td>@item.LeaveType.Name</td>
+                            <td><span class="badge badge-secondary">@item.NumberOfDays</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 <h1>My Leave Record</h1>
 <table class="table" id="tbldata">
     <thead>
@@ -51,6 +63,9 @@
             <th>
                 Cancel Request
             </th>
+         @*    <th>
+                Rejection Reason
+            </th> *@
         </tr>
     </thead>
     <tbody>
@@ -79,7 +94,9 @@
                     }
                     else if (item.Approved == false)
                     {
+
                         <span class="badge badge-danger">Rejected</span>
+
                     }
                     else if (item.Approved == null)
                     {
@@ -99,6 +116,13 @@
                         </a>
                     }
                 </td>
+            @*     <td>
+                    @if (item.Approved == false)
+                    {
+                        @Html.DisplayFor(modelItem => item.RejectionMessage)
+
+                    }
+                </td> *@
             </tr>
         }
     </tbody>

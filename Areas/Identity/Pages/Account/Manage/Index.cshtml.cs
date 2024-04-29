@@ -31,6 +31,7 @@ namespace Leave_Management.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Required(ErrorMessage = "Phone number is empty. Please provide 10 digits phone number.")]
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }

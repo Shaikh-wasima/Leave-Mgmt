@@ -13,7 +13,13 @@ using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
+    
+
+
+
+    
     [Authorize]
+
     public class LeaveRequestsController : Controller
     {
         private readonly IUnitOfWork _uow;
@@ -52,6 +58,26 @@ namespace Leave_Management.Controllers
         }
 
 
+
+
+
+
+        public async Task<IActionResult> RejectionMessage(int id)
+        {
+            var leaveRequest = await _uow.LeaveRequest.GetAllWithThreeEntity((x => x.Id == id), includeProperties: "ApprovedBy", includeProperty: "RequestingEmployee", includeProperte: "LeaveType");
+            var model = _mapper.Map<LeaveRequestVm>(leaveRequest);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RMPost(int id)
+        {
+            await RejectRequest(id);
+            return RedirectToAction("Index","LeaveRequests");
+        }
+
+
+
         public async Task<ActionResult> ApproveRequest(int id)
         {
             try
@@ -63,7 +89,15 @@ namespace Leave_Management.Controllers
                 var allocation = await _uow.LeaveAllocation.GetAllWithTwoEntity((x =>
                     x.EmployeeId == employeeId && x.Period == DateTime.Now.Year &&
                     x.LeaveType.Id == leaveTypeId));
-                int daysRequested = (int)(leaveRequest.EndDate - leaveRequest.StartDate).TotalDays;
+                int daysRequested = (int)(leaveRequest.EndDate - leaveRequest.StartDate).TotalDays + 1;
+                for (int i = 0; i < daysRequested; i++)
+                {
+                    var currentDate = leaveRequest.StartDate.AddDays(i);
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        daysRequested--;
+                    }
+                }
                 //allocation.NumberOfDays -= daysRequested;
                 allocation.NumberOfDays = allocation.NumberOfDays - daysRequested;
 
@@ -167,6 +201,7 @@ namespace Leave_Management.Controllers
 
                 int dayRequested = (int)(endDate - startDate).TotalDays;
 
+
                 var leaveTypes = _uow.LeaveType.GetAll();
                 var leaveTypesItem = leaveTypes.Select(x => new SelectListItem
                 {
@@ -175,11 +210,11 @@ namespace Leave_Management.Controllers
                 });
                 collection.LeaveTypes = leaveTypesItem;
 
-                if (allocation == null)
+                if (allocation == null )
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
-                else if (DateTime.Compare(startDate, endDate) > 1)
+                else if (DateTime.Compare(startDate, endDate) > 0)
                 {
                     ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
@@ -187,11 +222,16 @@ namespace Leave_Management.Controllers
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
+                else if(collection.LeaveTypes == null)
+                { 
+                    ModelState.AddModelError("", "Please Select Leave Type");
+                }
 
                 if (!ModelState.IsValid)
                 {
                     return View(collection);
                 }
+              
 
                 var leaveRequestVm = new LeaveRequestVm
                 {

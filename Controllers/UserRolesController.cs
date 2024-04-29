@@ -56,6 +56,10 @@ namespace Leave_Management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] UserRole userRole)
         {
+            if (userRole.Name == null)
+            {
+                ModelState.AddModelError("Name", "Role name is required");
+            }
             if (ModelState.IsValid)
             {
                 userRole.Id = Guid.NewGuid().ToString();

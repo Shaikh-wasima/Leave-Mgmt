@@ -37,6 +37,8 @@ namespace Leave_Management.Models
         public string RequestComments { get; set; }
         public int TotalDays => (int)(EndDate - StartDate).TotalDays + 1;
 
+        public string RejectionMessage { get; set; }
+
     }
 
     public class CreateLeaveRequestVm
@@ -48,6 +50,8 @@ namespace Leave_Management.Models
         [Display(Name = "End Date")]
         public string EndDate { get; set; }
         public IEnumerable<SelectListItem> LeaveTypes { get; set; }
+
+        [Required(ErrorMessage = "Please select a leave type")]
         [Display(Name = "Leave Type")]
         public int LeaveTypeId { get; set; }
         [Display(Name = "Employee Comments")]
@@ -59,11 +63,11 @@ namespace Leave_Management.Models
     {
         [Display(Name = "Total No. of Requests")]
         public int TotalRequest { get; set; }
-        [Display(Name = "Pending Requests")]
+        [Display(Name = "Approved Requests")]
 
         public int ApprovedRequest { get; set; }
 
-        [Display(Name = "Approved Requests")]
+        [Display(Name = "Pending Requests")]
         public int PendingRequest { get; set; }
 
         [Display(Name = "Rejected Requests")]

@@ -5,10 +5,10 @@
     var title = Model.Id != 0 ? "Edit Leave Type" : "Create Leave Type";
 }
 
-<h1>@title</h1>
+<h1 class="text-center">@title</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 mx-auto p-5">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if (Model.Id != 0)

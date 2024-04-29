@@ -3,6 +3,15 @@
 @inject SignInManager<Employee> SignInManager
 @inject UserManager<Employee> UserManager
 
+@{
+    var currentController = ViewContext.RouteData.Values.ContainsKey("controller")
+       ? ViewContext.RouteData.Values["controller"].ToString()
+       : string.Empty;
+
+    var currentAction = ViewContext.RouteData.Values.ContainsKey("action")
+        ? ViewContext.RouteData.Values["action"].ToString()
+        : string.Empty;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,11 +40,11 @@
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
                 </li>
                 @*<li class="nav-item d-none d-sm-inline-block">
-                        <a href="index3.html" class="nav-link">Home</a>
-                    </li>
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <a href="#" class="nav-link">Contact</a>
-                    </li>*@
+                <a href="index3.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                <a href="#" class="nav-link">Contact</a>
+                </li>*@
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -44,7 +53,7 @@
             <!-- Brand Logo -->
             <a href="#" class="brand-link">
                 @*<img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                    style="opacity: .8">*@
+                style="opacity: .8">*@
                 <span class="brand-text font-weight-light">Leave Management</span>
             </a>
 
@@ -62,20 +71,21 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">
+                                    <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link @(Url.IsActive("Home","Index",currentController,currentAction))">
                                     <i class="nav-icon fas fa-home"></i>
                                     <p>
                                         Home
                                     </p>
                                 </a>
                             </li>
-                        
+                        }
 
-                        
-                            @if (User.IsInRole("Employee"))
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                           @*  if (User.IsInRole("Employee")) *@
                             {
                                 <li class="nav-item">
-                                    <a asp-area="" asp-controller="LeaveRequests" asp-action="Upsert" class="nav-link">
+                                        <a asp-area="" asp-controller="LeaveRequests" asp-action="Upsert" class="nav-link @(Url.IsActive("LeaveRequests","Upsert",currentController,currentAction))">
                                         <i class="nav-icon fas fa-pen-alt"></i>
                                         <p>
                                             Apply For Leave
@@ -83,7 +93,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a asp-area="" asp-controller="LeaveRequests" asp-action="MyLeave" class="nav-link">
+                                        <a asp-area="" asp-controller="LeaveRequests" asp-action="MyLeave" class="nav-link @(Url.IsActive("LeaveRequests","MyLeave",currentController,currentAction))">
                                         <i class="nav-icon fas fa-book-open"></i>
                                         <p>
                                             My Leave
@@ -91,9 +101,10 @@
                                     </a>
                                 </li>
                             }
-                        
-                        
-                            @if (User.IsInRole("Administrator"))
+                        }
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            if (User.IsInRole("Administrator"))
                             {
                                 <li class="nav-item has-treeview menu-open">
                                     <a href="#" class="nav-link active">
@@ -105,28 +116,33 @@
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a asp-controller="LeaveTypes" asp-action="Index" class="nav-link">
+                                                <a asp-area="" asp-controller="LeaveTypes" asp-action="Index" class="nav-link @(Url.IsActive("LeaveTypes","Index",currentController,currentAction))">
                                                 <i class="fas fa-list nav-icon"></i>
                                                 <p>Leave Types</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a asp-controller="LeaveAllocations" asp-action="Index" class="nav-link">
+                                                <a asp-area="" asp-controller="LeaveAllocations" asp-action="Index" class="nav-link @(Url.IsActive("LeaveAllocations","Index",currentController,currentAction))">
                                                 <i class="fas fa-user-plus nav-icon"></i>
                                                 <p>Leave Allocations</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a asp-controller="LeaveRequests" asp-action="Index" class="nav-link">
+                                                <a asp-area="" asp-controller="LeaveRequests" asp-action="Index" class="nav-link @(Url.IsActive("LeaveRequests","Index",currentController,currentAction))">
                                                 <i class="fas fa-cogs nav-icon"></i>
                                                 <p>Leave Requests</p>
                                             </a>
                                         </li>
-                                       
                                         <li class="nav-item">
-                                            <a asp-controller="LeaveAllocations" asp-action="ListEmployee" class="nav-link">
+                                                <a asp-area="" asp-controller="LeaveAllocations" asp-action="ListEmployee" class="nav-link @(Url.IsActive("LeaveAllocations","ListEmployee",currentController,currentAction))">
                                                 <i class="fas fa-users nav-icon"></i>
                                                 <p>Employees</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-area="" asp-controller="UserRoles" asp-action="Index" class="nav-link @(Url.IsActive("UserRoles","Index",currentController,currentAction))">
+                                                <i class="fas fa-user-friends nav-icon"></i>
+                                                <p>Role</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -135,12 +151,7 @@
                                                 <p>Change User Role</p>
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="UserRoles" asp-action="Index" class="nav-link">
-                                                <i class="fas fa-user-friends nav-icon"></i>
-                                                <p>User Role</p>
-                                            </a>
-                                        </li>
+
                                     </ul>
                                 </li>
                             }
@@ -181,17 +192,8 @@
         </aside>
         <!-- /.control-sidebar -->
         <!-- Main Footer -->
-        <footer class="main-footer">
-            <!-- To the right -->
-            <div class="float-right d-none d-sm-inline">
-                Styled by <a href="https://adminlte.io">AdminLTE.io</a>
-            </div>
-            <!-- Default to the left -->
-            <strong>Copyright &copy; @DateTime.Now.Year Core Leave Management System.</strong> All rights reserved.
-        </footer>
-    </div>    <!-- ./wrapper -->
+         </div>    <!-- ./wrapper -->
     <!-- jQuery -->
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

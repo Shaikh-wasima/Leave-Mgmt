@@ -1,0 +1,10 @@
+﻿@model Leave_Management.Models.LeaveRequestVm
+
+
+<form asp-controller="LeaveRequests" asp-action="RMPost" asp-route-id="@Model.Id" method="post" class="needs-validation"  novalidate>
+    <div class="form-group">
+        <label for="rejectionMessage">Rejection Message:</label>
+        <textarea class="form-control" id="rejectionMessage" name="rejectionMessage" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger">Reject</button>
+</form>

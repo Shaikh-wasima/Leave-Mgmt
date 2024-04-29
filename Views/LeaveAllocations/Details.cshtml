@@ -4,10 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details For @Model.Employee.Firstname @Model.Employee.Lastname</h1>
-
-<div>
-    <hr />
+<h1 class="text-center display-6">Details For @Model.Employee.Firstname @Model.Employee.Lastname</h1>
+<hr/>
+<div class="container">
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employee.UserName)
