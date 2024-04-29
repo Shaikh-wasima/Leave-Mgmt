@@ -1,0 +1,41 @@
+﻿@model Leave_Management.Data.UserRole
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminLTE.cshtml";
+}
+
+<h1 class="text-center display-6">Details</h1>
+
+<div id="myTable" class="table">
+    <table class="table table-bordered">
+        <tr>
+            <th>Name</th>
+            <td>@Html.DisplayFor(model => model.Name)</td>
+        </tr>
+        <tr>
+            <th>Normalized Name</th>
+            <td>@Html.DisplayFor(model => model.NormalizedName)</td>
+        </tr>
+        <tr>
+            <th>Concurrency Stamp</th>
+            <td>@Html.DisplayFor(model => model.ConcurrencyStamp)</td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+    <a class="btn btn-secondary" href="@Url.Action("Index")">
+        <i class="fas fa-arrow-left"></i> Back to List
+    </a>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#mytable').dataTable();
+        });
+    </script>
+}
