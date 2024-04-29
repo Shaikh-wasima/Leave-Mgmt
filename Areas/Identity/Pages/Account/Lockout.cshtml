@@ -1,0 +1,19 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using Leave_Management.Data
+@inject SignInManager<Employee> SignInManager
+@inject UserManager<Employee> UserManager
+@model LockoutModel
+@{
+    ViewData["Title"] = "Locked out";
+    if (SignInManager.IsSignedIn(User))
+    {
+        Response.Redirect("/"); // Redirect to homepage or dashboard
+    }
+
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">This account has been locked out, please try again later.</p>
+</header>

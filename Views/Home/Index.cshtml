@@ -1,0 +1,109 @@
+﻿﻿@using Microsoft.AspNetCore.Identity;
+@using Leave_Management.Data;
+@using Leave_Management.Contracts;
+@inject SignInManager<Employee> SignInManager;
+@inject UserManager<Employee> UserManager;
+@inject IUnitOfWork _uow;
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@{
+    //var leaveComment = "";
+    if (SignInManager.IsSignedIn(User))
+    {
+        <div class="text-center">
+            <h1 class="display-4">Calendar</h1>
+            <hr class="" />
+            <div id="calendar"></div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-center display-6">You are not logged in.</h1>
+    }
+
+    var leaveRequests =  _uow.LeaveRequest.GetAll();
+    var leaveEvents = new List<object>();
+
+    foreach (var leave in leaveRequests)
+    {
+        if (leave.RequestingEmployeeId != null)
+        {
+            // Fetch the user using RequestingEmployeeId
+            var requestingEmployee = await UserManager.FindByIdAsync(leave.RequestingEmployeeId);
+
+            if (requestingEmployee != null)
+            {
+                // Construct the title using the employee's name
+                var title = $"{requestingEmployee.Firstname} {requestingEmployee.Lastname}";
+                leaveEvents.Add(new
+                {
+                    title = title,
+                    start = leave.StartDate.ToString("yyyy-MM-dd"),
+                    end = leave.EndDate.AddDays(1).ToString("yyyy-MM-dd"),
+                    color = "#fc0101",
+                    leaveRequestId = leave.Id,
+                });
+            }
+        }
+    }
+
+    var serializedEvents = Newtonsoft.Json.JsonConvert.SerializeObject(leaveEvents);
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: @Html.Raw(serializedEvents),
+                selectable: true,
+                eventClick: function (info) {
+                    var endDate = new Date(info.event.end);
+                    endDate.setDate(endDate.getDate() - 1);
+                    var startDate = new Date(info.event.start).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                    var formattedEndDate = endDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                    $('#modalTitle').text(info.event.title);
+                    $('#modalStart').text(startDate);
+                    $('#modalEnd').text(formattedEndDate);
+                    $('#myModal').modal('show');
+                }
+            });
+            calendar.render();
+        });
+    </script>
+}
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+
+<!-- Modal HTML -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Leave Request Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Start Date:</strong> <span id="modalStart"></span></p>
+                <p><strong>End Date:</strong> <span id="modalEnd"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #calendar {
+        width: 60%; /* Adjust the width of the calendar */
+        margin: 0 auto;
+        font-size: 0.80rem;
+    }
+</style>
