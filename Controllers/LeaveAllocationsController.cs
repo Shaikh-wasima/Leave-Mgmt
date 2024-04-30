@@ -163,20 +163,6 @@ namespace Leave_Management.Controllers
 
 
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public IActionResult CreateEmployee()
         {
             return View();

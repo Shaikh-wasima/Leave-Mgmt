@@ -14,8 +14,9 @@
         <!-- Options will be populated dynamically -->
     </select>
     <br>
-    <input type="submit" value="Assign Manager">
+    <input type="submit" value="Assign Manager" id="assignManagerButton">
 </form>
+<div id="employeeManagerInfo"></div>
 
 @section scripts {
     <script>
@@ -40,6 +41,15 @@
                         value: manager.firstname + manager.lastname,
                         text: manager.firstname + manager.lastname
                     }));
+                });
+
+                $('#assignManagerButton').click(function (e) {
+                    e.preventDefault();
+                    var selectedEmployee = $('#employee').val();
+                    var selectedManager = $('#manager').val();
+
+                    // Display the selected employee and manager info
+                    $('#employeeManagerInfo').html('<p>Employee: ' + selectedEmployee + '</p><p>Manager: ' + selectedManager + '</p>');
                 });
             });            
         });
