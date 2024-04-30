@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
-    
 
 
 
-    
+
+
     [Authorize]
 
     public class LeaveRequestsController : Controller
@@ -73,7 +73,7 @@ namespace Leave_Management.Controllers
         public async Task<IActionResult> RMPost(int id)
         {
             await RejectRequest(id);
-            return RedirectToAction("Index","LeaveRequests");
+            return RedirectToAction("Index", "LeaveRequests");
         }
 
 
@@ -210,28 +210,35 @@ namespace Leave_Management.Controllers
                 });
                 collection.LeaveTypes = leaveTypesItem;
 
-                if (allocation == null )
+
+                if (collection.LeaveTypeId == 0)
+                {
+                    ModelState.AddModelError("", "Please Select Leave Type");
+                }
+
+                if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
-                else if (DateTime.Compare(startDate, endDate) > 0)
+                if (DateTime.Compare(startDate, endDate) > 0)
                 {
                     ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
-                else if (dayRequested > allocation.NumberOfDays)
+                if (dayRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
-                else if(collection.LeaveTypes == null)
-                { 
-                    ModelState.AddModelError("", "Please Select Leave Type");
+
+                if (startDate.Date < DateTime.Now.Date)
+                {
+                    ModelState.AddModelError("", "Start Date cannot be in the past");
                 }
 
                 if (!ModelState.IsValid)
                 {
                     return View(collection);
                 }
-              
+
 
                 var leaveRequestVm = new LeaveRequestVm
                 {
