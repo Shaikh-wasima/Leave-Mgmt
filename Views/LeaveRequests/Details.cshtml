@@ -94,8 +94,8 @@ else
                         </button>
                     </div>
                     <div class="modal-body">
-                        <label for="rejectionReason">Rejection Reason:</label>
-                        <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
+                        <label for="rejectionMessage">Rejection Reason:</label>
+                        <textarea class="form-control" id="rejectionMessage" rows="3"></textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -122,12 +122,12 @@ else
 
         // When the reject modal is closed, clear the rejection reason
         $('#rejectModal').on('hidden.bs.modal', function () {
-            $('#rejectionReason').val('');
+            $('#rejectionMessage').val('');
         });
 
         // When the "Reject" button inside the modal is clicked
         $('#submitReject').click(function () {
-            var rejectionReason = $('#rejectionReason').val(); // Get the rejection reason from the textarea
+            var rejectionMessage = $('#rejectionMessage').val(); // Get the rejection reason from the textarea
 
 
             // If the rejection reason is not empty

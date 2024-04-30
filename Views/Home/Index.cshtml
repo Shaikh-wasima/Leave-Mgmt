@@ -22,7 +22,23 @@
     }
     else
     {
-        <h1 class="text-center display-6">You are not logged in.</h1>
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4">Welcome to Leave Management</h1>
+                    <p class="lead">Please log in or register to continue.</p>
+                    <div class="btn-group" role="group" aria-label="Login or Register">
+                        <a href="/Identity/Account/Login" class="btn btn-primary btn-lg mr-2">Login</a>
+                        <a href="/Identity/Account/Register" class="btn btn-secondary btn-lg ml-2">Register</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-lg-6 mx-auto">
+                    <img src="~/images/Leave Management.png" class="img-fluid" alt="Employees">
+                </div>
+            </div>
+        </div>
     }
 
     var leaveRequests =  _uow.LeaveRequest.GetAll();

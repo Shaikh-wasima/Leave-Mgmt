@@ -156,17 +156,6 @@ namespace Leave_Management.Controllers
             return View();
         }
 
-
-
-
-
-
-
-
-
-
-
-
         public IActionResult CreateEmployee()
         {
             return View();
@@ -295,14 +284,6 @@ namespace Leave_Management.Controllers
                 return View();
             }
         }
-
-
-
-
-
-
-
-
         public async Task<ActionResult> Edit(int id)
         {
             var leaveAllocation = await _uow.LeaveAllocation

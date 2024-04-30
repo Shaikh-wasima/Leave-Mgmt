@@ -62,19 +62,32 @@ namespace Leave_Management.Controllers
 
 
 
+        [HttpGet]
         public async Task<IActionResult> RejectionMessage(int id)
         {
-            var leaveRequest = await _uow.LeaveRequest.GetAllWithThreeEntity((x => x.Id == id), includeProperties: "ApprovedBy", includeProperty: "RequestingEmployee", includeProperte: "LeaveType");
+            var leaveRequest = await _uow.LeaveRequest.Get(id);
             var model = _mapper.Map<LeaveRequestVm>(leaveRequest);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RMPost(int id)
+        public async Task<IActionResult> RejectionMessage(LeaveRequestVm model)
         {
-            await RejectRequest(id);
-            return RedirectToAction("Index","LeaveRequests");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var leaveRequest = await _uow.LeaveRequest.Get(model.Id);
+            leaveRequest.RejectionMessage = model.RejectionMessage;
+
+            _uow.LeaveRequest.Update(leaveRequest);
+            _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
+            return RedirectToAction("Index", "LeaveRequests");
         }
+
+
 
 
 
@@ -117,7 +130,7 @@ namespace Leave_Management.Controllers
             }
         }
 
-        public async Task<ActionResult> RejectRequest(int id)
+        public async Task<ActionResult> RejectRequest(int id, string rejectionMessage)
         {
             try
             {
@@ -126,17 +139,20 @@ namespace Leave_Management.Controllers
                 leaveRequest.Approved = false;
                 leaveRequest.ApprovedById = user.Id;
                 leaveRequest.DateActioned = DateTime.Now;
-                leaveRequest.RejectionMessage = user.Re;
+                leaveRequest.RejectionMessage = rejectionMessage; // Set rejection message
 
                 _uow.LeaveRequest.Update(leaveRequest);
-                _uow.Save();
+                _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                // Handle exception
                 return RedirectToAction(nameof(Index));
             }
         }
+
 
 
         public ActionResult MyLeave()
