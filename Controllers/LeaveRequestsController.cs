@@ -210,25 +210,6 @@ namespace Leave_Management.Controllers
                 });
                 collection.LeaveTypes = leaveTypesItem;
 
-                //if (allocation == null )
-                //{
-                //    ModelState.AddModelError("", "You Have No Days Left");
-                //}
-                //else if (DateTime.Compare(startDate, endDate) > 0)
-                //{
-                //    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
-                //}
-                //else if (dayRequested > allocation.NumberOfDays)
-                //{
-                //    ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
-                //}
-                //else if(collection.LeaveTypes == null)
-                //{ 
-                //    ModelState.AddModelError("", "Please Select Leave Type");
-                //}
-
-
-
                 if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
@@ -247,12 +228,10 @@ namespace Leave_Management.Controllers
                 }
                 // Check if either start date or end date is before today's date
                 else if (startDate.Date < DateTime.Today || endDate.Date < DateTime.Today)
+                
                 {
                     ModelState.AddModelError("", "Dates cannot be before today's date");
                 }
-
-
-
 
                 if (!ModelState.IsValid)
                 {

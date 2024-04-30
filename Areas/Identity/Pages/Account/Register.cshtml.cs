@@ -61,7 +61,7 @@ namespace Leave_Management.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
             [Required]
             [DataType(DataType.Text)]
-            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+            [RegularExpression(@"^[A-Za-z]+$", ErrorMessage = "Name can only contain letters")]
             [Display(Name = "First Name")]
             public string Firstname { get; set; }
             [Required]
