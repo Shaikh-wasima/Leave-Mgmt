@@ -40,12 +40,15 @@ namespace Leave_Management.Controllers
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
+
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = leaveRequestModel.Count(x => x.Approved == null) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
+                CancelledRequest = cancelled,
                 LeaveRequest = leaveRequestModel
             };
             return View(model);
@@ -216,17 +219,18 @@ namespace Leave_Management.Controllers
                     ModelState.AddModelError("", "Please Select Leave Type");
                 }
 
+
                 if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
-                if (DateTime.Compare(startDate, endDate) > 0)
-                {
-                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
-                }
-                if (dayRequested > allocation.NumberOfDays)
+                else if (dayRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
+                }
+                else if (DateTime.Compare(startDate, endDate) > 0)
+                {
+                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
 
                 if (startDate.Date < DateTime.Now.Date)
@@ -269,11 +273,12 @@ namespace Leave_Management.Controllers
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = (leaveRequestModel.Count(x => x.Approved == null)) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
                 LeaveRequest = leaveRequestModel
             };
