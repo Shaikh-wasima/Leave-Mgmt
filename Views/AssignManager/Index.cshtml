@@ -4,7 +4,7 @@
     ViewData["Title"] = "Assign Manager";
 }
 
-<h1>Assign Manager</h1>
+@* <h1>Assign Manager</h1>
 
 <table class="table">
     <thead>
@@ -68,7 +68,77 @@
     </script>
 }
 
+ *@
 
+
+
+<h2>Assign Manager</h2>
+<form id="assignManagerForm">
+    <label for="employee">Select Employee:</label>
+    <select id="employee" name="employee">
+        <!-- Options will be populated dynamically via JavaScript -->
+    </select>
+    <br>
+    <label for="manager">Select Manager:</label>
+    <select id="manager" name="manager">
+        <!-- Options will be populated dynamically via JavaScript -->
+    </select>
+    <br>
+    <input type="submit" value="Assign Manager">
+</form>
+
+@section script {
+
+    <script>
+        // JSON data containing employee details
+        const jsonData = {
+            "data": [
+                // Your JSON data goes here
+            ]
+        };
+
+        // Function to populate dropdowns with employee and manager options
+        function populateDropdowns() {
+            const employeesDropdown = document.getElementById('employee');
+            const managersDropdown = document.getElementById('manager');
+
+            jsonData.data.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.text = employee.userName;
+                if (employee.role.toLowerCase() === 'employee') {
+                    employeesDropdown.appendChild(option);
+                } else if (employee.role.toLowerCase() === 'manager') {
+                    managersDropdown.appendChild(option);
+                }
+            });
+        }
+
+        // Function to handle form submission
+        document.getElementById('assignManagerForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const employeeId = formData.get('employee');
+            const managerId = formData.get('manager');
+
+            // Find the selected employee and manager objects
+            const employee = jsonData.data.find(item => item.id === employeeId);
+            const manager = jsonData.data.find(item => item.id === managerId);
+
+            // Update the employee object with the manager's name
+            if (employee) {
+                employee.managedBy = manager ? manager.userName : null;
+            }
+
+            // Log the updated JSON data (you can send it to the server if needed)
+            console.log(jsonData);
+        });
+
+        // Populate dropdowns when the page loads
+        window.onload = populateDropdowns;
+    </script>
+
+}
 
 
 

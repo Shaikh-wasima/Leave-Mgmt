@@ -27,16 +27,17 @@ namespace Leave_Management.Controllers
 
         public IActionResult Index()
         {
-            var employees = _userManager.GetUsersInRoleAsync("Employee").Result;
-            var employeeVmList = employees.Select(e => new EmployeeVm
-            {
-                Id = e.Id,
-                Email = e.Email,
-                Firstname = e.Firstname,
-                Lastname = e.Lastname
-            }).ToList();
+            //var employees = _userManager.GetUsersInRoleAsync("Employee").Result;
+            //var employeeVmList = employees.Select(e => new EmployeeVm
+            //{
+            //    Id = e.Id,
+            //    Email = e.Email,
+            //    Firstname = e.Firstname,
+            //    Lastname = e.Lastname
+            //}).ToList();
 
-            return View(employeeVmList);
+            //return View(employeeVmList);
+            return View();
         }
 
 

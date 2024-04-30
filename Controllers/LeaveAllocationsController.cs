@@ -156,6 +156,16 @@ namespace Leave_Management.Controllers
             return View();
         }
 
+        public IActionResult AssignManager()
+        {
+            return View();
+        }
+
+
+        
+
+
+
 
 
 
