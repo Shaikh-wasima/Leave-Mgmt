@@ -1,0 +1,77 @@
+﻿@model List<Leave_Management.Models.EmployeeVm>
+
+@{
+    ViewData["Title"] = "Assign Manager";
+}
+
+<h1>Assign Manager</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Manager</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.Email</td>
+                <td>@employee.Firstname</td>
+                <td>@employee.Lastname</td>
+                <td>
+                    <form asp-controller="AssignManager" asp-action="Assign" method="post" class="form-inline">
+                        <input type="hidden" name="employeeId" value="@employee.Id" />
+                        <div class="form-group">
+                            <select class="form-control" name="managerId" id="managerDropdown_@employee.Id">
+                                <option value="">Select Manager</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        // Make an AJAX request to fetch employees data
+        fetch('/LeaveAllocations/GetAll')
+            .then(response => response.json())
+            .then(data => {
+                // Filter employees from the JSON data
+                const employees = data.data.filter(item => item.role.toLowerCase() === 'employee');
+
+                // Populate dropdowns for each employee
+                employees.forEach(employee => {
+                    const managerDropdown = document.getElementById('managerDropdown_' + employee.id);
+
+                    // Append options for each employee
+                    data.data.forEach(item => {
+                        if (item.role.toLowerCase() === 'manager') {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = `${item.firstname} ${item.lastname}`;
+                            managerDropdown.appendChild(option);
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching employees:', error);
+            });
+    </script>
+}
+
+
+
+
+
+
+
+

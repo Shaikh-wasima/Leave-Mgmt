@@ -9,7 +9,7 @@ function loadDataTable() {
     $('#tblData').DataTable({
         "ajax": {
             "url": "/LeaveAllocations/GetAll",
-            "dataSrc": "data" // Assuming the JSON data is wrapped in a "data" key
+            "dataSrc": "data" 
         },
         "columns": [
             { "data": "firstname", "width": "15%" },

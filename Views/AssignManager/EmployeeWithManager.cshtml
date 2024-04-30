@@ -1,0 +1,25 @@
+﻿@model List<Leave_Management.Models.EmployeeVm>
+
+<h1>All Employees with Manager</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Employee Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Manager</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.Firstname @employee.Lastname</td>
+                <td>@employee.Email</td>
+                <td>@employee.Role</td>
+                <td>@(employee.Manager != null ? employee.Manager.Name : "N/A")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -57,55 +57,41 @@
 
 <br />
 <br />
+<button id="exportButton" class="btn btn-primary">
+    <i class="fas fa-download"></i> Export to CSV
+</button>
+
+
 
 <hr />
 <h1>Leave Request Log</h1>
 <hr />
 <table id="mytable" class="table">
+    <!-- Table headers -->
     <thead>
         <tr>
-            <th>
-                Employee Name
-            </th>
-            <th>
-                Start Date
-            </th>
-            <th>
-                End Date
-            </th>
-            <th>
-                Leave Type
-            </th>
-            <th>
-                Date Requested
-            </th>
-
-            <th>
-                Approval Status
-            </th>
-
+            <th>Employee Name</th>
+            <th>Total Days</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Leave Type</th>
+            <th>Date Requested</th>
+            <th>Approval Status</th>
             <th></th>
         </tr>
     </thead>
+    <!-- Table body -->
     <tbody>
         @foreach (var item in Model.LeaveRequest)
         {
+            <!-- Table rows -->
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RequestingEmployee.Firstname) @Html.DisplayFor(modelItem => item.RequestingEmployee.Lastname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LeaveType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateRequested)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.RequestingEmployee.Firstname) @Html.DisplayFor(modelItem => item.RequestingEmployee.Lastname)</td>
+                <td>@Html.DisplayFor(modelItem => item.TotalDays)</td>
+                <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.LeaveType.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.DateRequested)</td>
                 <td>
                     @if (item.Cancelled)
                     {
@@ -131,8 +117,6 @@
                             <i class="fa fa-file"></i>Review
                         </a>
                     }
-
-
                 </td>
             </tr>
         }
@@ -140,9 +124,40 @@
 </table>
 
 @section Scripts{
+    <!-- Your existing script section -->
     <script>
         $(document).ready(function () {
             $('#mytable').dataTable();
+
+            $('#exportButton').click(function () {
+                // Get all rows from table
+                var rows = $('#mytable tbody tr');
+                var csvContent = "data:text/csv;charset=utf-8,";
+
+                // Add table headers to CSV
+                var header = [];
+                $('#mytable th').each(function () {
+                    header.push($(this).text());
+                });
+                csvContent += header.join(",") + "\r\n";
+
+                // Add table data to CSV
+                rows.each(function () {
+                    var rowData = [];
+                    $(this).find('td').each(function () {
+                        rowData.push($(this).text());
+                    });
+                    csvContent += rowData.join(",") + "\r\n";
+                });
+
+                // Create a download link and click it to start downloading
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "leave_requests.csv");
+                document.body.appendChild(link);
+                link.click();
+            });
         });
     </script>
 }
