@@ -1,9 +1,9 @@
-﻿@* @model List<EmployeeVm>
+﻿
+@model List<EmployeeVm>
 
 @{
     ViewData["Title"] = "Assign Role";
 }
-
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -11,66 +11,70 @@
         @TempData["SuccessMessage"]
     </div>
 }
-<h1>Assign Role</h1>
-
-<form asp-controller="LeaveAllocations" asp-action="EmployeeRoles" method="post">
-    <div class="form-group">
-        <label for="employeeId">Select Employee:</label>
-        <select class="form-control" id="employeeId" name="employeeId">
-            @foreach (var employee in Model)
-            {
-                <option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-            }
-        </select>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Assign Role</h1>
+            <form asp-controller="LeaveAllocations" asp-action="EmployeeRoles" method="post">
+                <div class="form-group">
+                    <label for="employeeId">Select Employee:</label>
+                    <select class="form-control " id="employeeId" name="employeeId">
+                        @foreach (var employee in Model)
+                        {
+                            <option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="role">Select Role:</label>
+                    <select class="form-control " id="role" name="role">
+                        <!-- Roles will be populated dynamically -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Assign Role</button>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="role">Select Role:</label>
-        <select class="form-control" id="role" name="role">
-            <option value="Administrator">Administrator</option>
-            <option value="Employee">Employee</option>
-            <option value="Wasima">Wasima</option>
-           
-        </select>
+</div>
+
+
+@* 
+// If you want to make it a table use this code    
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="text-center">Assign Role</h1>
+            <form asp-controller="LeaveAllocations" asp-action="EmployeeRoles" method="post">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Select Employee</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="employeeId" name="employeeId">
+                                @foreach (var employee in Model)
+                                {
+                                    <option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Select Role</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="role" name="role">
+                                <!-- Roles will be populated dynamically -->
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-sm">Assign Role</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Assign Role</button>
-</form>
-
-
+</div>
  *@
 
-
-                @model List<EmployeeVm>
-
-@{
-    ViewData["Title"] = "Assign Role";
-}
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-    </div>
-}
-<h1>Assign Role</h1>
-
-<form asp-controller="LeaveAllocations" asp-action="EmployeeRoles" method="post">
-    <div class="form-group">
-        <label for="employeeId">Select Employee:</label>
-        <select class="form-control" id="employeeId" name="employeeId">
-            @foreach (var employee in Model)
-            {
-                <option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="role">Select Role:</label>
-        <select class="form-control" id="role" name="role">
-            <!-- Roles will be populated dynamically -->
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Assign Role</button>
-</form>
 
 @section Scripts {
     <script src="~/js/LeaveAllocation.js"></script>
