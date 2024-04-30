@@ -80,12 +80,64 @@ else
         <a class="btn btn-success" asp-action="ApproveRequest" asp-route-id="@Model.Id">
             <i class="fas fa-check"></i> Approve
         </a>
-        <a class="btn btn-danger" asp-action="RejectRequest" asp-route-id="@Model.Id">
+        <a class="btn btn-danger" id="rejectButton" data-toggle="modal" data-target="#rejectModal">
             <i class="fas fa-remove"></i> Reject
         </a>
+        <!-- Modal -->
+        <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Reject Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="rejectionReason">Rejection Reason:</label>
+                        <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a class="btn btn-danger" asp-action="RejectRequest" asp-route-id="@Model.Id">
+                            <i class="fas fa-remove"></i> Reject
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 
     <a class="btn btn-outline-secondary" asp-action="Index">
         <i class="fa fa-arrow-left"></i> Back to List
     </a>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // When the reject button is clicked, show the modal
+        $('#rejectButton').click(function () {
+            $('#rejectModal').modal('show');
+        });
+
+        // When the reject modal is closed, clear the rejection reason
+        $('#rejectModal').on('hidden.bs.modal', function () {
+            $('#rejectionReason').val('');
+        });
+
+        // When the "Reject" button inside the modal is clicked
+        $('#submitReject').click(function () {
+            var rejectionReason = $('#rejectionReason').val(); // Get the rejection reason from the textarea
+
+
+            // If the rejection reason is not empty
+            if (rejectionReason.trim() !== '') {
+                $('#rejectModal').modal('hide');
+              
+            } else {
+                // If the rejection reason is empty, show an error message or handle it as needed
+                alert('Please enter a rejection reason.');
+            }
+        });
+    });
+</script>

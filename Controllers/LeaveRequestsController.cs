@@ -126,6 +126,7 @@ namespace Leave_Management.Controllers
                 leaveRequest.Approved = false;
                 leaveRequest.ApprovedById = user.Id;
                 leaveRequest.DateActioned = DateTime.Now;
+                leaveRequest.RejectionMessage = user.Re;
 
                 _uow.LeaveRequest.Update(leaveRequest);
                 _uow.Save();
