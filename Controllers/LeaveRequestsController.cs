@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
-    
 
 
 
-    
+
+
     [Authorize]
 
     public class LeaveRequestsController : Controller
@@ -62,19 +62,32 @@ namespace Leave_Management.Controllers
 
 
 
+        [HttpGet]
         public async Task<IActionResult> RejectionMessage(int id)
         {
-            var leaveRequest = await _uow.LeaveRequest.GetAllWithThreeEntity((x => x.Id == id), includeProperties: "ApprovedBy", includeProperty: "RequestingEmployee", includeProperte: "LeaveType");
+            var leaveRequest = await _uow.LeaveRequest.Get(id);
             var model = _mapper.Map<LeaveRequestVm>(leaveRequest);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RMPost(int id)
+        public async Task<IActionResult> RejectionMessage(LeaveRequestVm model)
         {
-            await RejectRequest(id);
-            return RedirectToAction("Index","LeaveRequests");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var leaveRequest = await _uow.LeaveRequest.Get(model.Id);
+            leaveRequest.RejectionMessage = model.RejectionMessage;
+
+            _uow.LeaveRequest.Update(leaveRequest);
+            _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
+            return RedirectToAction("Index", "LeaveRequests");
         }
+
+
 
 
 
@@ -117,7 +130,7 @@ namespace Leave_Management.Controllers
             }
         }
 
-        public async Task<ActionResult> RejectRequest(int id)
+        public async Task<ActionResult> RejectRequest(int id, string rejectionMessage)
         {
             try
             {
@@ -126,16 +139,20 @@ namespace Leave_Management.Controllers
                 leaveRequest.Approved = false;
                 leaveRequest.ApprovedById = user.Id;
                 leaveRequest.DateActioned = DateTime.Now;
+                leaveRequest.RejectionMessage = rejectionMessage; // Set rejection message
 
                 _uow.LeaveRequest.Update(leaveRequest);
-                _uow.Save();
+                _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                // Handle exception
                 return RedirectToAction(nameof(Index));
             }
         }
+
 
 
         public ActionResult MyLeave()
@@ -267,28 +284,37 @@ namespace Leave_Management.Controllers
                 });
                 collection.LeaveTypes = leaveTypesItem;
 
-                if (allocation == null )
+                if (collection.LeaveTypeId == 0)
+                {
+                    ModelState.AddModelError("", "Please Select Leave Type");
+                }
+
+                if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
-                }
-                else if (DateTime.Compare(startDate, endDate) > 0)
-                {
-                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
                 else if (dayRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
-                else if(collection.LeaveTypes == null)
-                { 
-                    ModelState.AddModelError("", "Please Select Leave Type");
+
+                if (DateTime.Compare(startDate, endDate) > 0)
+                {
+                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
+                else if (startDate.Date < DateTime.Today || endDate.Date < DateTime.Today)
+                {
+                    ModelState.AddModelError("", "Start Date and End Date cannot be in the past.");
+                }
+
+
+
 
                 if (!ModelState.IsValid)
                 {
                     return View(collection);
                 }
-              
+
 
                 var leaveRequestVm = new LeaveRequestVm
                 {

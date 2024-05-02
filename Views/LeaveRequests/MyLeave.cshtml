@@ -12,7 +12,7 @@
 
     
 
-<h1>My Leave Allocation</h1>
+<h1>My Leave Allocations</h1>
 
 <div class="jumbotron mx-auto">
     <div class="card">
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<h1>My Leave Record</h1>
+<h1>My Leave Records</h1>
 <table class="table" id="tbldata">
     <thead>
         <tr>
@@ -63,7 +63,7 @@
             <th>
                 Cancel Request
             </th>
-         @*    <th>
+          @*   <th>
                 Rejection Reason
             </th> *@
         </tr>
@@ -116,7 +116,7 @@
                         </a>
                     }
                 </td>
-            @*     <td>
+                @* <td>
                     @if (item.Approved == false)
                     {
                         @Html.DisplayFor(modelItem => item.RejectionMessage)
