@@ -1,6 +1,4 @@
-﻿using Leave_Management.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Leave_Management.Models
@@ -9,9 +7,9 @@ namespace Leave_Management.Models
     {
         public string Id { get; set; }
         public string UserName { get; set; }
-       
+
         public string PhoneNumber { get; set; }
-        
+
         public string TaxId { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime DateJoined { get; set; }
@@ -42,8 +40,8 @@ namespace Leave_Management.Models
         public AssignManagerVM Manager { get; set; }
     }
 
-   
-   
+
+
 
 
 }
