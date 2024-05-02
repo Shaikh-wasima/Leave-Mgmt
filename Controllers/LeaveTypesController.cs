@@ -118,5 +118,44 @@ namespace Leave_Management.Controllers
                 return View(model);
             }
         }
+
+
+    //     public IActionResult DownloadLeaveTypes()
+    //{
+    //    var leaveTypes = _uow.LeaveType.GetAll(); // Retrieve all leave types from the database
+
+    //    // Create a new Excel package
+    //    using (var package = new ExcelPackage())
+    //    {
+    //        var worksheet = package.Workbook.Worksheets.Add("Leave Types"); // Create a worksheet
+
+    //        // Add column headers
+    //        worksheet.Cells["A1"].Value = "Leave Type Name";
+    //        worksheet.Cells["B1"].Value = "Description";
+    //        worksheet.Cells["C1"].Value = "Number of Days";
+
+    //        // Populate data rows
+    //        int row = 2;
+    //        foreach (var leaveType in leaveTypes)
+    //        {
+    //            worksheet.Cells["A" + row].Value = leaveType.Name;
+    //            zzworksheet.Cells["B" + row].Value = leaveType.Description;
+    //            worksheet.Cells["C" + row].Value = leaveType.NumberOfDays;
+    //            row++;
+    //        }
+
+    //        // Convert the Excel package to a byte array
+    //        byte[] excelData = package.GetAsByteArray();
+
+    //        // Return the Excel file as a downloadable file
+    //        return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "LeaveTypes.xlsx");
+    //    }
+    //}
+
+
+
+
+
+
     }
 }

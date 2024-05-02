@@ -13,6 +13,8 @@ namespace Leave_Management.Mapping
             CreateMap<LeaveAllocation, LeaveAllocationVm>().ReverseMap();
             CreateMap<LeaveAllocation, EditLeaveAllocationVM>().ReverseMap();
             CreateMap<Employee, EmployeeVm>().ReverseMap();
+            CreateMap<LeaveRequestVm, LeaveRequest>()
+            .ForMember(dest => dest.RejectionMessage, opt => opt.MapFrom(src => src.RejectionMessage));
         }
     }
 }

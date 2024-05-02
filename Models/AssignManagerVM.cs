@@ -5,11 +5,19 @@ namespace Leave_Management.Models
 {
     public class AssignManagerVM
     {
+
         
-            public int Id { get; set; }
-            public string Name { get; set; }
-            
-        
+
+
+
+
+
+        public List<EmployeeVm> Employees { get; set; }
+        public List<EmployeeVm> Managers { get; set; }
+
+
+
+
 
     }
 }
