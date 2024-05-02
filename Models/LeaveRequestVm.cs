@@ -79,6 +79,9 @@ namespace Leave_Management.Models
     {
         public List<LeaveAllocationVm> LeaveAllocations { get; set; }
         public List<LeaveRequestVm> LeaveRequests { get; set; }
+        public int TotalApprovedLeave { get; set; }
+        public int TotalRejectedLeave { get; set; }
+        public int TotalPendingLeave { get; set; }
 
     }
 }
