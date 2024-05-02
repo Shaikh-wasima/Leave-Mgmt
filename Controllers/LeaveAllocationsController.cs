@@ -6,17 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Encodings.Web;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
@@ -28,17 +24,19 @@ namespace Leave_Management.Controllers
         private readonly RoleManager<UserRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
-        
+        //private readonly IFlashMessage _flashMessage;
 
-      
 
-        public LeaveAllocationsController(IEmailSender emailSender,IUnitOfWork uow, UserManager<Employee> userManager, IMapper mapper, RoleManager<UserRole> roleManager)
+
+
+        public LeaveAllocationsController(IEmailSender emailSender, IUnitOfWork uow, UserManager<Employee> userManager, IMapper mapper, RoleManager<UserRole> roleManager)
         {
+            // _flashMessage = flashMessage;
             _uow = uow;
             _userManager = userManager;
             _mapper = mapper;
             _roleManager = roleManager;
-            _emailSender = emailSender;     
+            _emailSender = emailSender;
         }
         // GET: LeaveAllocation
         public IActionResult Index()
@@ -200,7 +198,7 @@ namespace Leave_Management.Controllers
                     }, Request.Scheme);
 
                     // Send confirmation email
-                    await _emailSender.SendEmailAsync(model.Email, "Password for your account.","Your password is " + password );
+                    await _emailSender.SendEmailAsync(model.Email, "Password for your account.", "Your password is " + password);
 
                     // Construct the return URL for password reset
                     var resetPasswordUrl = Url.Action("ResetPassword", "Account", new
@@ -239,6 +237,8 @@ namespace Leave_Management.Controllers
             var users = _userManager.Users.ToList();
             var userVmList = _mapper.Map<List<EmployeeVm>>(users);
 
+
+
             return View(userVmList);
         }
 
@@ -259,16 +259,19 @@ namespace Leave_Management.Controllers
         public async Task<IActionResult> EmployeeRoles(string employeeId, string role)
         {
             var user = await _userManager.FindByIdAsync(employeeId);
-            if (user == null)
+            if (user == null || employeeId == "Please select a user.")
             {
-                return NotFound();
+                // ModelState.AddModelError("User", "User is not selected, Please select a user.");
+                TempData["ErrorMessage"] = "User is not selected, Please select a user.";
+                //_flashMessage.Warning("User is not selected, Please select a user.");
+                return RedirectToAction(nameof(EmployeeRoles));
             }
 
             // Remove existing roles
             var userRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-            // Assign new role
+
             var result = await _userManager.AddToRoleAsync(user, role);
             if (result.Succeeded)
             {
@@ -324,7 +327,7 @@ namespace Leave_Management.Controllers
 
 
 
-        
-        
+
+
     }
 }

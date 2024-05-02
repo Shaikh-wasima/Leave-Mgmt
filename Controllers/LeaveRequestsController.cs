@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
-    
 
 
 
-    
+
+
     [Authorize]
 
     public class LeaveRequestsController : Controller
@@ -231,11 +231,15 @@ namespace Leave_Management.Controllers
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
+                else if (dayRequested > allocation.NumberOfDays)
+                {
+                    ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
+                }
                 else if (DateTime.Compare(startDate, endDate) > 0)
                 {
                     ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
-                else if (dayRequested > allocation.NumberOfDays)
+                if (startDate.Date < DateTime.Now.Date)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
@@ -254,7 +258,7 @@ namespace Leave_Management.Controllers
                 {
                     return View(collection);
                 }
-              
+
 
                 var leaveRequestVm = new LeaveRequestVm
                 {
