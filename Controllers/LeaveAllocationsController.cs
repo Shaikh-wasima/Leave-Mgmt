@@ -11,8 +11,12 @@ using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Encodings.Web;
+using System.Text;
 
 namespace Leave_Management.Controllers
 {
@@ -24,8 +28,7 @@ namespace Leave_Management.Controllers
         private readonly RoleManager<UserRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
-        //private readonly IFlashMessage _flashMessage;
-
+        
 
 
 
@@ -154,6 +157,13 @@ namespace Leave_Management.Controllers
             return View();
         }
 
+        public IActionResult AssignManager()
+        {
+            return View();
+        }
+
+
+        
         public IActionResult CreateEmployee()
         {
             return View();
@@ -173,7 +183,7 @@ namespace Leave_Management.Controllers
 
                 var user = new Employee
                 {
-                    Email = model.Email,
+                    Email = model.Email.ToLower(),
                     Firstname = model.Firstname,
                     Lastname = model.Lastname,
                     UserName = model.Email,
@@ -329,5 +339,14 @@ namespace Leave_Management.Controllers
 
 
 
+
+
+
+
+
+
+
+        
+        
     }
 }

@@ -7,9 +7,9 @@ namespace Leave_Management.Models
     {
         public string Id { get; set; }
         public string UserName { get; set; }
-       
+
         public string PhoneNumber { get; set; }
-        
+
         public string TaxId { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime DateJoined { get; set; }
@@ -30,12 +30,15 @@ namespace Leave_Management.Models
         [Required]
         [DataType(DataType.EmailAddress)]
         [MaxLength(50)]
-        [RegularExpression(@"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}", ErrorMessage = "Please enter a valid email address. It must be in the format: example@example.com")]
+        [RegularExpression(@"[A-Z|a-z0-9._%+-]+@[A-Z|a-z0-9.-]+\.[a-z]{2,4}", ErrorMessage = "Please enter a valid email address. It must be in the format: example@example.com")]
         public string Email { get; set; }
 
         public string Role { get; set; }
 
 
 
-    }
+
+
+
+
 }
