@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Leave_Management.Data;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Leave_Management.Models
@@ -36,9 +38,20 @@ namespace Leave_Management.Models
         public string Role { get; set; }
 
 
+<<<<<<< HEAD
 
 
     }
 
+=======
+        public int ManagerId { get; set; }
+        public AssignManagerVM Manager { get; set; }
+    }
+
+   
+   
+
+>>>>>>> wasm
 
 }
+

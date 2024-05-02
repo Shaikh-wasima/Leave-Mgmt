@@ -12,5 +12,6 @@ namespace Leave_Management.Data
         public DateTime DateOfBirth { get; set; }
         public DateTime DateJoined { get; set; }
         public string Discriminator { get; set; }
+        
     }
 }

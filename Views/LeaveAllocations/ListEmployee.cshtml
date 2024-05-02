@@ -5,8 +5,13 @@
     <div class="col-6">
         <h2 class="text-primary">List Of Employee </h2>
     </div>
+    
     <div class="col-6 text-right">
+        
         <a class="btn btn-success" asp-controller="LeaveAllocations" asp-action="CreateEmployee"><i class="fas fa-plus"></i> &nbsp; Create New Employee</a>
+        <button id="exportButton" class="btn btn-primary">
+            <i class="fas fa-download"></i> Export to CSV
+        </button>
     </div>
 </div>
 <br />
@@ -58,6 +63,53 @@
 
 
 
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#exportButton').click(function () {
+                // Make an AJAX request to fetch the JSON data
+                $.ajax({
+                    url: "/LeaveAllocations/GetAll",
+                    type: "GET",
+                    success: function (response) {
+                        // Extract headers from the first object in the data array
+                        var headers = Object.keys(response.data[0]);
+
+                        // Extract data from the JSON
+                        var tableData = [];
+                        response.data.forEach(function (item) {
+                            var rowData = [];
+                            headers.forEach(function (header) {
+                                rowData.push(item[header]);
+                            });
+                            tableData.push(rowData);
+                        });
+
+                        // Create a CSV content
+                        var csvContent = "data:text/csv;charset=utf-8,";
+                        csvContent += headers.join(",") + "\r\n";
+                        tableData.forEach(function (rowArray) {
+                            var row = rowArray.join(",");
+                            csvContent += row + "\r\n";
+                        });
+
+                        // Create a download link and click it to start downloading
+                        var encodedUri = encodeURI(csvContent);
+                        var link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "data.csv");
+                        document.body.appendChild(link);
+                        link.click();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error occurred while fetching data:", error);
+                    }
+                });
+            });
+        });
 
     </script>
 }

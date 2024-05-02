@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Leave_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240429135059_try")]
+    [Migration("20240430072703_try")]
     partial class @try
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

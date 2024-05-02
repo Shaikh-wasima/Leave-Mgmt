@@ -1,0 +1,147 @@
+﻿@model List<Leave_Management.Models.EmployeeVm>
+
+@{
+    ViewData["Title"] = "Assign Manager";
+}
+
+@* <h1>Assign Manager</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Manager</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.Email</td>
+                <td>@employee.Firstname</td>
+                <td>@employee.Lastname</td>
+                <td>
+                    <form asp-controller="AssignManager" asp-action="Assign" method="post" class="form-inline">
+                        <input type="hidden" name="employeeId" value="@employee.Id" />
+                        <div class="form-group">
+                            <select class="form-control" name="managerId" id="managerDropdown_@employee.Id">
+                                <option value="">Select Manager</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        // Make an AJAX request to fetch employees data
+        fetch('/LeaveAllocations/GetAll')
+            .then(response => response.json())
+            .then(data => {
+                // Filter employees from the JSON data
+                const employees = data.data.filter(item => item.role.toLowerCase() === 'employee');
+
+                // Populate dropdowns for each employee
+                employees.forEach(employee => {
+                    const managerDropdown = document.getElementById('managerDropdown_' + employee.id);
+
+                    // Append options for each employee
+                    data.data.forEach(item => {
+                        if (item.role.toLowerCase() === 'manager') {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = `${item.firstname} ${item.lastname}`;
+                            managerDropdown.appendChild(option);
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching employees:', error);
+            });
+    </script>
+}
+
+ *@
+
+
+
+<h2>Assign Manager</h2>
+<form id="assignManagerForm">
+    <label for="employee">Select Employee:</label>
+    <select id="employee" name="employee">
+        <!-- Options will be populated dynamically via JavaScript -->
+    </select>
+    <br>
+    <label for="manager">Select Manager:</label>
+    <select id="manager" name="manager">
+        <!-- Options will be populated dynamically via JavaScript -->
+    </select>
+    <br>
+    <input type="submit" value="Assign Manager">
+</form>
+
+@section script {
+
+    <script>
+        // JSON data containing employee details
+        const jsonData = {
+            "data": [
+                // Your JSON data goes here
+            ]
+        };
+
+        // Function to populate dropdowns with employee and manager options
+        function populateDropdowns() {
+            const employeesDropdown = document.getElementById('employee');
+            const managersDropdown = document.getElementById('manager');
+
+            jsonData.data.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.text = employee.userName;
+                if (employee.role.toLowerCase() === 'employee') {
+                    employeesDropdown.appendChild(option);
+                } else if (employee.role.toLowerCase() === 'manager') {
+                    managersDropdown.appendChild(option);
+                }
+            });
+        }
+
+        // Function to handle form submission
+        document.getElementById('assignManagerForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const employeeId = formData.get('employee');
+            const managerId = formData.get('manager');
+
+            // Find the selected employee and manager objects
+            const employee = jsonData.data.find(item => item.id === employeeId);
+            const manager = jsonData.data.find(item => item.id === managerId);
+
+            // Update the employee object with the manager's name
+            if (employee) {
+                employee.managedBy = manager ? manager.userName : null;
+            }
+
+            // Log the updated JSON data (you can send it to the server if needed)
+            console.log(jsonData);
+        });
+
+        // Populate dropdowns when the page loads
+        window.onload = populateDropdowns;
+    </script>
+
+}
+
+
+
+
+
+

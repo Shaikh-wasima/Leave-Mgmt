@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Assign Manager";
+}
+
+<h2>Assign Manager</h2>
+<form id="assignManagerForm">
+    <label for="employee">Select Employee:</label>
+    <select id="employee" name="employee">
+        <!-- Options will be populated dynamically -->
+    </select>
+    <br>
+    <label for="manager">Select Manager:</label>
+    <select id="manager" name="manager">
+        <!-- Options will be populated dynamically -->
+    </select>
+    <br>
+    <input type="submit" value="Assign Manager" id="assignManagerButton">
+</form>
+<div id="employeeManagerInfo"></div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Fetch JSON data from the provided URL
+            $.getJSON("/LeaveAllocations/GetAll", function (data) {
+                var employees = data.data.filter(employee => employee.role.toLowerCase() === 'employee');
+                var managers = data.data.filter(employee => employee.role.toLowerCase() === 'manager');
+
+                var employeeDropdown = $('#employee');
+                var managerDropdown = $('#manager');
+
+                employees.forEach(employee => {
+                    employeeDropdown.append($('<option>', {
+                        value: employee.firstname + employee.lastname,
+                        text: employee.firstname + employee.lastname
+                    }));
+                });
+
+                managers.forEach(manager => {
+                    managerDropdown.append($('<option>', {
+                        value: manager.firstname + manager.lastname,
+                        text: manager.firstname + manager.lastname
+                    }));
+                });
+
+                $('#assignManagerButton').click(function (e) {
+                    e.preventDefault();
+                    var selectedEmployee = $('#employee').val();
+                    var selectedManager = $('#manager').val();
+
+                    // Display the selected employee and manager info
+                    $('#employeeManagerInfo').html('<p>Employee: ' + selectedEmployee + '</p><p>Manager: ' + selectedManager + '</p>');
+                });
+            });            
+        });
+    </script>
+}
