@@ -156,10 +156,7 @@ namespace Leave_Management.Controllers
             return View();
         }
 
-        public IActionResult AssignManager()
-        {
-            return View();
-        }
+        
 
 
         
@@ -194,7 +191,9 @@ namespace Leave_Management.Controllers
                 if (result.Succeeded)
                 {
                     _userManager.AddToRoleAsync(user, "Employee").Wait();
-                    TempData["SuccessMessage"] = "Create";
+                    
+                    TempData["SuccessMessage"] = "Manager assigned successfully.";
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
@@ -219,6 +218,7 @@ namespace Leave_Management.Controllers
 
                     // Redirect to list employee page after successful registration
                     return RedirectToAction(nameof(ListEmployee));
+
                 }
 
                 foreach (var error in result.Errors)
@@ -336,6 +336,66 @@ namespace Leave_Management.Controllers
 
 
 
+        // GET: LeaveAllocations/AssignManager
+        public IActionResult AssignManager()
+        {
+            var employees = _userManager.GetUsersInRoleAsync("Employee").Result;
+            var managers = _userManager.GetUsersInRoleAsync("Manager").Result;
+
+            var employeesList = _mapper.Map<List<EmployeeVm>>(employees);
+            var managersList = _mapper.Map<List<EmployeeVm>>(managers);
+
+            var viewModel = new AssignManagerVM
+            {
+                Employees = employeesList,
+                Managers = managersList
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: LeaveAllocations/AssignManager
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignManager(string employeeId, string managerId)
+        {
+            try
+            {
+                var employee = await _userManager.FindByIdAsync(employeeId);
+                var manager = await _userManager.FindByIdAsync(managerId);
+
+                if (employee == null || manager == null)
+                {
+                    return NotFound();
+                }
+
+                
+                var managers = _userManager.GetUsersInRoleAsync("Manager").Result;
+                
+                var managersList = _mapper.Map<List<EmployeeVm>>(managers);
+                var matchingManager = managersList.FirstOrDefault(manager => manager.Id.ToString() == managerId);
+                string matchingManagerFirstName = matchingManager != null ? matchingManager.Firstname : null;
+                string matchingManagerLastName = matchingManager != null ? matchingManager.Lastname : null;
+                String ManagerName = matchingManagerFirstName + matchingManagerLastName;
+
+
+
+
+
+                // Assign manager to employee
+                employee.ManagerId = managerId;
+                employee.ManagerName = ManagerName;
+                await _userManager.UpdateAsync(employee);
+
+                TempData["SuccessMessage"] = "Manager assigned successfully.";
+                return RedirectToAction(nameof(ListEmployee));
+            }
+            catch (Exception ex)
+            {
+                // Log and handle the exception
+                return View();
+            }
+        }
 
 
 
@@ -348,7 +408,12 @@ namespace Leave_Management.Controllers
 
 
 
-        
-        
+
+
+
+
+
+
+
     }
 }

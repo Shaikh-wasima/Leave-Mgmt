@@ -142,6 +142,14 @@ namespace Leave_Management.Controllers
         {
             var employee = _userManager.GetUserAsync(User).Result;
             var employeeId = employee.Id;
+
+            // Retrieve all approved leave requests for the employee
+            var approvedRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == true);
+
+            // Calculate total approved leave days
+            var totalApprovedLeave = approvedRequests.Sum(x => (x.EndDate - x.StartDate).Days + 1);
+
+            // Rest of your code
             var employeeAllocation = _uow.LeaveAllocation.GetAll(includeProperties: "LeaveType")
                 .Where(x => x.EmployeeId == employeeId && x.Period == DateTime.Now.Year)
                 .ToList();
@@ -153,8 +161,57 @@ namespace Leave_Management.Controllers
             var model = new EmployeeLeaveRequestVm
             {
                 LeaveAllocations = employeeAllocationModel,
-                LeaveRequests = employeeRequestModel
+                LeaveRequests = employeeRequestModel,
+                TotalApprovedLeave = totalApprovedLeave // Add total approved leave to the model
             };
+
+            return View(model);
+        }
+
+        public ActionResult MyLeaveGet()
+        {
+            var employee = _userManager.GetUserAsync(User).Result;
+            var employeeId = employee.Id;
+
+            // Retrieve all approved leave requests for the employee
+            var approvedRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == true);
+
+            // Calculate total approved leave days
+            
+            var RejectRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == false);
+            var PendingRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == null && x.Cancelled == false);
+
+            // Calculate total approved leave days
+            var totalApprovedLeave = approvedRequests.Sum(x => (x.EndDate - x.StartDate).Days + 1);
+            var totalRejectLeave = RejectRequests.Count();
+            var totalPendingLeave = PendingRequests.Count();
+
+            // Rest of your code
+            var employeeAllocation = _uow.LeaveAllocation.GetAll(includeProperties: "LeaveType")
+                .Where(x => x.EmployeeId == employeeId && x.Period == DateTime.Now.Year)
+                .ToList();
+            var employeeRequest = _uow.LeaveRequest.GetAll((x => x.RequestingEmployeeId == employeeId),
+                includeProperties: "LeaveType", includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
+            var employeeAllocationModel = _mapper.Map<List<LeaveAllocationVm>>(employeeAllocation);
+            var employeeRequestModel = _mapper.Map<List<LeaveRequestVm>>(employeeRequest);
+
+            var model = new EmployeeLeaveRequestVm
+            {
+                LeaveAllocations = employeeAllocationModel,
+                LeaveRequests = employeeRequestModel,
+                TotalApprovedLeave = totalApprovedLeave, // Add total approved leave to the model
+                TotalRejectedLeave = totalRejectLeave,
+                TotalPendingLeave = totalPendingLeave
+            };
+
+            // Return the model as JSON
+            return Json(model);
+        }
+
+        public ActionResult Dashboard()
+        {
+            // Retrieve employee's leave information
+            var model = MyLeave();
 
             return View(model);
         }

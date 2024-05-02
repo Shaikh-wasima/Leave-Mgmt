@@ -1,57 +1,36 @@
-﻿@{
-    ViewBag.Title = "Assign Manager";
+﻿<h2>Assign Manager to Employee</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-<h2>Assign Manager</h2>
-<form id="assignManagerForm">
-    <label for="employee">Select Employee:</label>
-    <select id="employee" name="employee">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <br>
-    <label for="manager">Select Manager:</label>
-    <select id="manager" name="manager">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <br>
-    <input type="submit" value="Assign Manager" id="assignManagerButton">
+<form asp-action="AssignManager" method="post">
+    <div class="form-group">
+        <label for="employee">Select Employee:</label>
+        <select class="form-control" name="employeeId" id="employee">
+            <option value="">-- Select Employee --</option>
+            @foreach (var employee in Model.Employees)
+            {
+                <option value="@employee.Id">@employee.Firstname  @employee.Lastname  </option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="manager">Select Manager:</label>
+        <select class="form-control" name="managerId" id="manager">
+            <option value="">-- Select Manager --</option>
+            @foreach (var manager in Model.Managers)
+            {
+                <option value="@manager.Id">@manager.Firstname  @manager.Lastname</option>
+            }
+        </select>
+
+
+
+
+
+
+    </div>
+    <button type="submit" class="btn btn-primary">Assign Manager</button>
 </form>
-<div id="employeeManagerInfo"></div>
-
-@section scripts {
-    <script>
-        $(document).ready(function () {
-            // Fetch JSON data from the provided URL
-            $.getJSON("/LeaveAllocations/GetAll", function (data) {
-                var employees = data.data.filter(employee => employee.role.toLowerCase() === 'employee');
-                var managers = data.data.filter(employee => employee.role.toLowerCase() === 'manager');
-
-                var employeeDropdown = $('#employee');
-                var managerDropdown = $('#manager');
-
-                employees.forEach(employee => {
-                    employeeDropdown.append($('<option>', {
-                        value: employee.firstname + employee.lastname,
-                        text: employee.firstname + employee.lastname
-                    }));
-                });
-
-                managers.forEach(manager => {
-                    managerDropdown.append($('<option>', {
-                        value: manager.firstname + manager.lastname,
-                        text: manager.firstname + manager.lastname
-                    }));
-                });
-
-                $('#assignManagerButton').click(function (e) {
-                    e.preventDefault();
-                    var selectedEmployee = $('#employee').val();
-                    var selectedManager = $('#manager').val();
-
-                    // Display the selected employee and manager info
-                    $('#employeeManagerInfo').html('<p>Employee: ' + selectedEmployee + '</p><p>Manager: ' + selectedManager + '</p>');
-                });
-            });            
-        });
-    </script>
-}

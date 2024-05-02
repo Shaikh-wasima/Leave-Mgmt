@@ -1,43 +1,219 @@
-﻿﻿@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity;
 @using Leave_Management.Data;
 @using Leave_Management.Contracts;
 @inject SignInManager<Employee> SignInManager;
 @inject UserManager<Employee> UserManager;
 @inject IUnitOfWork _uow;
-
+@model EmployeeLeaveRequestVm
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-@{
-    //var leaveComment = "";
-    if (SignInManager.IsSignedIn(User))
+@if (SignInManager.IsSignedIn(User))
+{
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Leave Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto">
+                    <!-- Add any navigation links here -->
+                </ul>
+            </div>
+        </div>
+    </nav> 
+    if ((User.IsInRole("Administrator")) || (User.IsInRole("Manager")))
     {
-        <div class="text-center">
-            <h1 class="display-4">Calendar</h1>
-            <hr class="" />
-            <div id="calendar"></div>
+
+        <div class="container-fluid mt-4">
+
+            <div class="row mt-4 justify-content-around">
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Requests</h5><br />
+                            <h2 class="card-number" id="totalRequests">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Requests</h5><br />
+                            <h2 class="card-number" id="pendingRequests">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Approved Requests</h5><br />
+                            <h2 class="card-number" id="approvedRequests">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Rejected Requests</h5><br />
+                            <h2 class="card-number" id="rejectedRequests">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     }
-    else
+
+    if (User.IsInRole("Employee"))
     {
-        <h1 class="text-center display-6">You are not logged in.</h1>
+
+        <div class="container-fluid mt-4">
+            <div class="row mt-4 justify-content-around">
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Approve Leave</h5><br />
+                            <h2 class="card-number" id="totalApprovedLeave"></h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Allocated Leave</h5><br />
+                            <h2 class="card-number" id="AllocatedLeave">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Remaining Leave</h5><br />
+                            <h2 class="card-number" id="RemainingLeave">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Rejected Leave</h5><br />
+                            <h2 class="card-number" id="RejectedLeave">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 
-    var leaveRequests =  _uow.LeaveRequest.GetAll();
+    <div class="container-fluid mt-4">
+        <h2 class="text-center">Calendar</h2>
+        <div id="calendar"></div>
+    </div>
+
+    <div class="container-fluid mt-4 text-center">
+        <div class="border rounded p-4">
+            <h3>Holidays</h3>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Festival/Holiday</th>
+                        <th>Date</th>
+                        <th>Day</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>New Year</td>
+                        <td>01st January</td>
+                        <td>Monday</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Republic Day</td>
+                        <td>26th January</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Maha Shivaratri</td>
+                        <td>8th March</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Holi</td>
+                        <td>25th March</td>
+                        <td>Monday</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Ramzan Id (Id – Ul- Fitar)</td>
+                        <td>11th April</td>
+                        <td>Thursday (may vary depending on the moon sight)</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Maharashtra Day</td>
+                        <td>01st May</td>
+                        <td>Wednesday</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Independence Day</td>
+                        <td>15th August</td>
+                        <td>Thursday</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Mahatma Gandhi Jayanti</td>
+                        <td>02nd October</td>
+                        <td>Wednesday</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Diwali</td>
+                        <td>01st November</td>
+                        <td>Friday</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Christmas</td>
+                        <td>25th December</td>
+                        <td>Wednesday</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   
+}
+else
+{
+    <div class="container">
+        <h1 class="text-center display-6">You are not logged in.</h1>
+    </div>
+}
+
+@{
+    var leaveRequests = _uow.LeaveRequest.GetAll();
     var leaveEvents = new List<object>();
 
     foreach (var leave in leaveRequests)
     {
         if (leave.RequestingEmployeeId != null)
         {
-            // Fetch the user using RequestingEmployeeId
             var requestingEmployee = await UserManager.FindByIdAsync(leave.RequestingEmployeeId);
 
             if (requestingEmployee != null)
             {
-                // Construct the title using the employee's name
                 var title = $"{requestingEmployee.Firstname} {requestingEmployee.Lastname}";
                 leaveEvents.Add(new
                 {
@@ -52,35 +228,86 @@
     }
 
     var serializedEvents = Newtonsoft.Json.JsonConvert.SerializeObject(leaveEvents);
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: @Html.Raw(serializedEvents),
-                selectable: true,
-                eventClick: function (info) {
-                    var endDate = new Date(info.event.end);
-                    endDate.setDate(endDate.getDate() - 1);
-                    var startDate = new Date(info.event.start).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-                    var formattedEndDate = endDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-                    $('#modalTitle').text(info.event.title);
-                    $('#modalStart').text(startDate);
-                    $('#modalEnd').text(formattedEndDate);
-                    $('#myModal').modal('show');
-                }
-            });
-            calendar.render();
-        });
-    </script>
 }
 
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
 
-<!-- Modal HTML -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: @Html.Raw(serializedEvents),
+            selectable: true,
+            eventClick: function (info) {
+                var endDate = new Date(info.event.end);
+                endDate.setDate(endDate.getDate() - 1);
+                var startDate = new Date(info.event.start).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                var formattedEndDate = endDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                $('#modalTitle').text(info.event.title);
+                $('#modalStart').text(startDate);
+                $('#modalEnd').text(formattedEndDate);
+                $('#myModal').modal('show');
+            }
+        });
+        calendar.render();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.get("/LeaveRequests/getall", function (data, status) {
+            if (status === "success") {
+                $("#totalRequests").text(data.data.totalRequest);
+                $("#pendingRequests").text(data.data.pendingRequest);
+                $("#approvedRequests").text(data.data.approvedRequest);
+                $("#rejectedRequests").text(data.data.rejectedRequest);
+            } else {
+                console.log("Failed to fetch data.");
+            }
+        });
+    });
+</script>
+
+<script>
+    // Fetch data from the JSON URL
+    fetch('/LeaveRequests/MyLeaveGet')
+        .then(response => response.json())
+        .then(data => {
+            // Extract relevant data
+            const totalApprovedLeave = data.totalApprovedLeave;
+            
+            var defaultDaysArray = [];
+
+            // Iterate over leave allocations and print defaultDays
+            $.each(data.leaveAllocations, function (index, allocation) {
+                var defaultDays = allocation.leaveType.defaultDays;
+                defaultDaysArray.push(defaultDays);
+                $('#defaultDaysList').append('<li>' + defaultDays + '</li>');
+            });
+
+            var sumDefaultDays = defaultDaysArray.reduce(function (a, b) {
+                return a + b;
+            }, 0);
+            // Calculate remaining leave
+            const remainingLeave =  sumDefaultDays - totalApprovedLeave;
+
+            // Update HTML elements with the calculated values
+            document.getElementById('totalApprovedLeave').textContent = totalApprovedLeave;
+            document.getElementById('AllocatedLeave').textContent = sumDefaultDays;
+            document.getElementById('RemainingLeave').textContent = remainingLeave;
+            document.getElementById('RejectedLeave').textContent = data.totalRejectedLeave;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+</script>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -102,8 +329,7 @@
 
 <style>
     #calendar {
-        width: 60%; /* Adjust the width of the calendar */
+        width: 100%;
         margin: 0 auto;
-        font-size: 0.80rem;
     }
 </style>

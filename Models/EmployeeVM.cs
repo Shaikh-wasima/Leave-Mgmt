@@ -38,8 +38,11 @@ namespace Leave_Management.Models
         public string Role { get; set; }
 
 
-        public int ManagerId { get; set; }
-        public AssignManagerVM Manager { get; set; }
+       
+
+
+        public string ManagerId { get; set; }
+        public string ManagerName { get; set; }
     }
 
    
