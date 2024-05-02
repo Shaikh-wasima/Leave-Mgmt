@@ -211,24 +211,23 @@ namespace Leave_Management.Controllers
                 collection.LeaveTypes = leaveTypesItem;
 
 
-                if (collection.LeaveTypeId == 0)
-                {
-                    ModelState.AddModelError("", "Please Select Leave Type");
-                }
+                //if (collection.LeaveTypeId == 0)
+                //{
+                //    ModelState.AddModelError("", "Please Select Leave Type");
+                //}
 
                 if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
-                if (DateTime.Compare(startDate, endDate) > 0)
-                {
-                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
-                }
-                if (dayRequested > allocation.NumberOfDays)
+                else if (dayRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
-
+                else if (DateTime.Compare(startDate, endDate) > 0)
+                {
+                    ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
+                }
                 if (startDate.Date < DateTime.Now.Date)
                 {
                     ModelState.AddModelError("", "Start Date cannot be in the past");
