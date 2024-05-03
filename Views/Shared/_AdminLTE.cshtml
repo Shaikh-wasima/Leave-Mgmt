@@ -127,24 +127,36 @@
                                                 <p>Leave Types</p>
                                             </a>
                                         </li>
+                                        
                                         <li class="nav-item">
                                                 <a asp-area="" asp-controller="LeaveAllocations" asp-action="Index" class="nav-link @(Url.IsActive("LeaveAllocations","Index",currentController,currentAction))">
                                                 <i class="fas fa-user-plus nav-icon"></i>
                                                 <p>Leave Allocations</p>
                                             </a>
                                         </li>
+                                        @if ((User.IsInRole("Administrator")) || (User.IsInRole("Manager")))
+                                        {
                                         <li class="nav-item">
                                                 <a asp-area="" asp-controller="LeaveRequests" asp-action="Index" class="nav-link @(Url.IsActive("LeaveRequests","Index",currentController,currentAction))">
                                                 <i class="fas fa-cogs nav-icon"></i>
                                                 <p>Leave Requests</p>
                                             </a>
                                         </li>
+                                        
                                         <li class="nav-item">
                                                 <a asp-area="" asp-controller="LeaveAllocations" asp-action="ListEmployee" class="nav-link @(Url.IsActive("LeaveAllocations","ListEmployee",currentController,currentAction))">
                                                 <i class="fas fa-users nav-icon"></i>
                                                 <p>Employees</p>
                                             </a>
                                         </li>
+                                        
+                                        <li class="nav-item">
+                                            <a asp-area="" asp-controller="LeaveAllocations" asp-action="AssignManager" class="nav-link @(Url.IsActive("LeaveAllocations","AssignManager",currentController,currentAction))">
+                                                <i class="fas fa-user-friends nav-icon"></i>
+                                                <p>Assign Manager</p>
+                                            </a>
+                                        </li>
+                                        }
                                         <li class="nav-item">
                                             <a asp-area="" asp-controller="UserRoles" asp-action="Index" class="nav-link @(Url.IsActive("UserRoles","Index",currentController,currentAction))">
                                                 <i class="fas fa-user-friends nav-icon"></i>

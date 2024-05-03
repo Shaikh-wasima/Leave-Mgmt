@@ -1,36 +1,37 @@
-﻿<h2>Assign Manager to Employee</h2>
+﻿
 
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-<form asp-action="AssignManager" method="post">
-    <div class="form-group">
-        <label for="employee">Select Employee:</label>
-        <select class="form-control" name="employeeId" id="employee">
-            <option value="">-- Select Employee --</option>
-            @foreach (var employee in Model.Employees)
-            {
-                <option value="@employee.Id">@employee.Firstname  @employee.Lastname  </option>
-            }
-        </select>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Assign Manager to Employee</h1>
+            <form asp-action="AssignManager" method="post">
+                <div class="form-group">
+                    <label for="employee">Select Employee:</label>
+                    <select class="form-control" name="employeeId" id="employee">
+                        <option value="">-- Select Employee --</option>
+                        @foreach (var employee in Model.Employees)
+                        {
+                            <option value="@employee.Id">@employee.Firstname  @employee.Lastname  </option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="manager">Select Manager:</label>
+                    <select class="form-control" name="managerId" id="manager">
+                        <option value="">-- Select Manager --</option>
+                        @foreach (var manager in Model.Managers)
+                        {
+                            <option value="@manager.Id">@manager.Firstname  @manager.Lastname</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Assign Manager</button>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="manager">Select Manager:</label>
-        <select class="form-control" name="managerId" id="manager">
-            <option value="">-- Select Manager --</option>
-            @foreach (var manager in Model.Managers)
-            {
-                <option value="@manager.Id">@manager.Firstname  @manager.Lastname</option>
-            }
-        </select>
-
-
-
-
-
-
-    </div>
-    <button type="submit" class="btn btn-primary">Assign Manager</button>
-</form>
+</div>

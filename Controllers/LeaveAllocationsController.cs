@@ -168,6 +168,7 @@ namespace Leave_Management.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> CreateEmployee(EmployeeVm model)
         {
             try

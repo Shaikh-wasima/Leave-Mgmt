@@ -40,11 +40,12 @@ namespace Leave_Management.Controllers
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = leaveRequestModel.Count(x => x.Approved == null) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
                 LeaveRequest = leaveRequestModel
             };
@@ -345,11 +346,12 @@ namespace Leave_Management.Controllers
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = leaveRequestModel.Count(x => x.Approved == null) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
                 LeaveRequest = leaveRequestModel
             };

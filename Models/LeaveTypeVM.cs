@@ -7,6 +7,7 @@ namespace Leave_Management.Models
     {
         public int Id { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z]+$", ErrorMessage ="Leave Types can only contain letters.")]
         public string Name { get; set; }
         [Display(Name = "Default Number of Days")]
         [Required]
