@@ -5,6 +5,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Leave_Management.Models
 {
+    public static class Helper
+    {
+        public static int CalculateTotalDaysExcludingWeekends(DateTime startDate, DateTime endDate)
+        {
+            int daysRequested = (int)(endDate - startDate).TotalDays + 1;
+            for (int i = 0; i < daysRequested; i++)
+            {
+                var currentDate = startDate.AddDays(i);
+                if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    daysRequested--;
+                }
+            }
+            return Math.Abs(daysRequested);
+        }
+
+    }
     public class LeaveRequestVm
     {
         public int Id { get; set; }
@@ -35,11 +52,15 @@ namespace Leave_Management.Models
         [Display(Name = "Employee Comments")]
         [MaxLength(300)]
         public string RequestComments { get; set; }
-        public int TotalDays => (int)(EndDate - StartDate).TotalDays + 1;
+
+        public int TotalDays =>   Helper.CalculateTotalDaysExcludingWeekends(EndDate,StartDate);
 
         public string RejectionMessage { get; set; }
 
+       
+
     }
+
 
     public class CreateLeaveRequestVm
     {

@@ -17,12 +17,12 @@ namespace Leave_Management.Models
 
         [Required]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+        [RegularExpression(@"^[a-zA-Z ]+$", ErrorMessage = "First Name cannot contain numbers")]
         [Display(Name = "First Name")]
         public string Firstname { get; set; }
         [Required]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+        [RegularExpression(@"^[a-zA-Z ]+$", ErrorMessage = "Last Name cannot contain numbers")]
 
         [Display(Name = "Last Name")]
         public string Lastname { get; set; }

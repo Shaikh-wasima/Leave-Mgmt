@@ -61,12 +61,12 @@ namespace Leave_Management.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
             [Required]
             [DataType(DataType.Text)]
-            [RegularExpression(@"^[A-Za-z]+$", ErrorMessage = "Name can only contain letters")]
+            [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Invalid First Name, Please Enter A Valid First Name.")]
             [Display(Name = "First Name")]
             public string Firstname { get; set; }
             [Required]
             [DataType(DataType.Text)]
-            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+            [RegularExpression(@"^[a-zA-Z ]+$", ErrorMessage = "Invalid Last Name, Please Enter A Valid Last Name.")]
 
             [Display(Name = "Last Name")]
             public string Lastname { get; set; }

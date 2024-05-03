@@ -20,7 +20,7 @@ using System.Text;
 
 namespace Leave_Management.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrator, Manager")]
     public class LeaveAllocationsController : Controller
     {
         private readonly IUnitOfWork _uow;
@@ -168,7 +168,7 @@ namespace Leave_Management.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> CreateEmployee(EmployeeVm model)
         {
             try
@@ -190,11 +190,13 @@ namespace Leave_Management.Controllers
 
                 var result = await _userManager.CreateAsync(user, password);
 
+
                 if (result.Succeeded)
                 {
+                    //TempData["Loading"] = "Laoding...";
                     _userManager.AddToRoleAsync(user, "Employee").Wait();
                     
-                    TempData["SuccessMessage"] = "Manager assigned successfully.";
+                    //TempData["SuccessMessage"] = "Manager assigned successfully.";
                     
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

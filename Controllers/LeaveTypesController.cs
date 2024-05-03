@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Leave_Management.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrator, Manager")]
     public class LeaveTypesController : Controller
     {
         private readonly IUnitOfWork _uow;

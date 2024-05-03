@@ -34,7 +34,7 @@ namespace Leave_Management.Controllers
         }
 
         // GET: LeaveRequests
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Manager")]
         public ActionResult Index()
         {
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
@@ -274,7 +274,15 @@ namespace Leave_Management.Controllers
                     x.EmployeeId == employee.Id && x.Period == DateTime.Now.Year &&
                     x.LeaveType.Id == collection.LeaveTypeId));
 
-                int dayRequested = (int)(endDate - startDate).TotalDays;
+                int daysRequested = (int)(endDate - startDate).TotalDays + 1;
+                for (int i = 0; i < daysRequested; i++)
+                {
+                    var currentDate = startDate.AddDays(i);
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        daysRequested--;
+                    }
+                }
 
 
                 var leaveTypes = _uow.LeaveType.GetAll();
@@ -294,7 +302,7 @@ namespace Leave_Management.Controllers
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
                 }
-                else if (dayRequested > allocation.NumberOfDays)
+                else if (daysRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
