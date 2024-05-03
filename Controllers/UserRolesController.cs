@@ -56,19 +56,37 @@ namespace Leave_Management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] UserRole userRole)
         {
-            if (userRole.Name == null)
+            if (string.IsNullOrWhiteSpace(userRole.Name))
             {
                 ModelState.AddModelError("Name", "Role name is required");
             }
+
+
             if (ModelState.IsValid)
             {
-                userRole.Id = Guid.NewGuid().ToString();
-                userRole.NormalizedName = userRole.Name.ToUpper();
-                userRole.ConcurrencyStamp = Guid.NewGuid().ToString();
-                _context.Add(userRole);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var normalizedRoleName = userRole.Name?.ToUpper() ?? string.Empty;
+
+                var existingRole = await _context.Roles
+                                                 .FirstOrDefaultAsync(r => r.NormalizedName == normalizedRoleName);
+
+                if (existingRole != null)
+                {
+                    ModelState.AddModelError("Name", "Role name already exists");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    userRole.Id = Guid.NewGuid().ToString();
+                    userRole.NormalizedName = normalizedRoleName;
+                    userRole.ConcurrencyStamp = Guid.NewGuid().ToString();
+
+                    _context.Add(userRole);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
+
             return View(userRole);
         }
 
