@@ -332,9 +332,6 @@ namespace Leave_Management.Controllers
         }
 
 
-
-
-
         // GET: LeaveAllocations/AssignManager
         public IActionResult AssignManager()
         {
@@ -365,7 +362,8 @@ namespace Leave_Management.Controllers
 
                 if (employee == null || manager == null)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "User Or Manager is not selected, Please select both.";
+                    return RedirectToAction(nameof(AssignManager));
                 }
 
                 
@@ -377,16 +375,13 @@ namespace Leave_Management.Controllers
                 string matchingManagerLastName = matchingManager != null ? matchingManager.Lastname : null;
                 String ManagerName = matchingManagerFirstName + matchingManagerLastName;
 
-
-
-
-
                 // Assign manager to employee
                 employee.ManagerId = managerId;
                 employee.ManagerName = ManagerName;
                 await _userManager.UpdateAsync(employee);
 
                 TempData["SuccessMessage"] = "Manager assigned successfully.";
+                
                 return RedirectToAction(nameof(ListEmployee));
             }
             catch (Exception ex)
