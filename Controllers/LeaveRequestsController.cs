@@ -98,7 +98,7 @@ namespace Leave_Management.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 var leaveRequest = await _uow.LeaveRequest.Get(id);
-                if (leaveRequest.RequestingEmployee.Id == user.Id)
+                if (leaveRequest.RequestingEmployeeId == user.Id)
                 {
                     TempData["ErrorMessageApprove"] = "You cannot approve your own leave request!";
                     return RedirectToAction(nameof(Details), new { id = id });
@@ -140,10 +140,15 @@ namespace Leave_Management.Controllers
         {
             try
             {
+                //if(rejectionMessage == null)
+                //{
+                //    TempData["EmptyRejectionMessage"] = "Rejection message cannot be empty!";
+                //    return RedirectToAction(nameof(Details), new {id = id});
+                //}
                 var user = await _userManager.GetUserAsync(User);
 
                 var leaveRequest = await _uow.LeaveRequest.Get(id);
-                if(leaveRequest.RequestingEmployee.Id != user.Id)
+                if(leaveRequest.RequestingEmployeeId != user.Id)
                 {
                     leaveRequest.Approved = false;
                     leaveRequest.ApprovedById = user.Id;
@@ -154,7 +159,6 @@ namespace Leave_Management.Controllers
                     _uow.Save(); // Assuming SaveAsync is an asynchronous save method
 
                     return RedirectToAction(nameof(Index));
-
                 }
                 else
                 {
@@ -175,6 +179,11 @@ namespace Leave_Management.Controllers
         public ActionResult MyLeave()
         {
             var employee = _userManager.GetUserAsync(User).Result;
+            if (employee == null)
+            {
+                return View();
+            }
+
             var employeeId = employee.Id;
 
             // Retrieve all approved leave requests for the employee
@@ -209,6 +218,10 @@ namespace Leave_Management.Controllers
         public ActionResult MyLeaveGet()
         {
             var employee = _userManager.GetUserAsync(User).Result;
+            if(employee == null)
+            {
+                return NotFound();
+            }
             var employeeId = employee.Id;
 
             // Retrieve all approved leave requests for the employee
@@ -289,6 +302,17 @@ namespace Leave_Management.Controllers
                 var startDate = Convert.ToDateTime(collection.StartDate);
                 var endDate = Convert.ToDateTime(collection.EndDate);
                 var employee = await _userManager.GetUserAsync(User);
+
+                var overlappingRequests = _uow.LeaveRequest.GetAll().Where(lr =>
+                lr.RequestingEmployeeId == employee.Id &&
+                lr.Cancelled == false &&
+                lr.StartDate <= endDate &&
+                lr.EndDate >= startDate);
+
+                if (overlappingRequests.Any())
+                {
+                    ModelState.AddModelError("", "You already have leave request(s) overlapping with the selected dates.");
+                }
 
                 var allocation = await _uow.LeaveAllocation.GetAllWithTwoEntity((x =>
                     x.EmployeeId == employee.Id && x.Period == DateTime.Now.Year &&

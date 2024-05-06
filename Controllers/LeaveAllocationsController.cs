@@ -132,7 +132,11 @@ namespace Leave_Management.Controllers
         {
             var leaveTypes = await _uow.LeaveType.Get(id);
             var employees = _userManager.GetUsersInRoleAsync("Employee").Result;
-            foreach (var emp in employees)
+            var managers = _userManager.GetUsersInRoleAsync("Manager").Result;
+
+            var employeesAndManagers = employees.Concat(managers);
+
+            foreach (var emp in employeesAndManagers)
             {
                 if (_uow.LeaveAllocation.CheckAllocation(id, emp.Id))
                     continue;
@@ -288,8 +292,8 @@ namespace Leave_Management.Controllers
             var result = await _userManager.AddToRoleAsync(user, role);
             if (result.Succeeded)
             {
-                TempData["SuccessMessage"] = "Role Assigned Successfully";
-                return RedirectToAction(nameof(EmployeeRoles));
+                //TempData["SuccessMessage"] = "Role Assigned Successfully";
+                return RedirectToAction(nameof(ListEmployee));
             }
             else
             {

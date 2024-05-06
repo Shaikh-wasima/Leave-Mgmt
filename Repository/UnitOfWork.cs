@@ -12,8 +12,11 @@ namespace Leave_Management.Repository
             LeaveType = new LeaveTypeRepository(_db);
             LeaveRequest = new LeaveRequestRepository(_db);
             LeaveAllocation = new LeaveAllocationRepository(_db);
+            Events = new EventsRepository(_db);
+
         }
 
+        public IEventsRepository Events { get; private set; }
         public ILeaveTypeRepository LeaveType { get; private set; }
         public ILeaveRequestRepository LeaveRequest { get; private set; }
         public ILeaveAllocationRepository LeaveAllocation { get; private set; }
