@@ -53,11 +53,11 @@ namespace Leave_Management.Models
         [MaxLength(300)]
         public string RequestComments { get; set; }
 
-        public int TotalDays =>   Helper.CalculateTotalDaysExcludingWeekends(EndDate,StartDate);
+        public int TotalDays => Helper.CalculateTotalDaysExcludingWeekends(StartDate, EndDate);
 
         public string RejectionMessage { get; set; }
 
-       
+
 
     }
 

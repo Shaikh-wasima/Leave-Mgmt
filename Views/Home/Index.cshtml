@@ -104,7 +104,7 @@
                     <div class="card bg-info text-white">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div class="mr-auto">
-                                <h5 class="card-title font-weight-bold">Total Approve Leave</h5>
+                                <h5 class="card-title font-weight-bold">Total Approve Leave Days</h5>
                                 <h2 class="card-number" id="totalApprovedLeave">0</h2>
                             </div>
                             <i class="fas fa-check-circle fa-lg"></i> <!-- Font Awesome icon for total approved leave -->
@@ -116,25 +116,10 @@
                 <div class="col-md-3">
                     <a href="/LeaveRequests/MyLeave">
 
-                    <div class="card bg-warning text-white">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div class="mr-auto">
-                                <h5 class="card-title font-weight-bold">Allocated Leave</h5>
-                                <h2 class="card-number" id="AllocatedLeave">0</h2>
-                            </div>
-                            <i class="fas fa-calendar-plus fa-lg"></i> <!-- Font Awesome icon for allocated leave -->
-                        </div>
-                    </div>
-                    </a>
-
-                </div>
-                <div class="col-md-3">
-                    <a href="/LeaveRequests/MyLeave">
-
                     <div class="card bg-success text-white">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div class="mr-auto">
-                                <h5 class="card-title font-weight-bold">Remaining Leave</h5>
+                                <h5 class="card-title font-weight-bold">Remaining Leave Days</h5>
                                 <h2 class="card-number" id="RemainingLeave">0</h2>
                             </div>
                             <i class="fas fa-calendar-check fa-lg"></i> <!-- Font Awesome icon for remaining leave -->
@@ -146,10 +131,25 @@
                 <div class="col-md-3">
                     <a href="/LeaveRequests/MyLeave">
 
+                    <div class="card bg-warning text-white">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div class="mr-auto">
+                                <h5 class="card-title font-weight-bold">Pending Requests</h5>
+                                <h2 class="card-number" id="PendingLeave">0</h2>
+                            </div>
+                            <i class="fas fa-calendar-plus fa-lg"></i> <!-- Font Awesome icon for allocated leave -->
+                        </div>
+                    </div>
+                    </a>
+
+                </div>
+                <div class="col-md-3">
+                    <a href="/LeaveRequests/MyLeave">
+
                     <div class="card bg-danger text-white">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div class="mr-auto">
-                                <h5 class="card-title font-weight-bold">Rejected Leave</h5>
+                                <h5 class="card-title font-weight-bold">Rejected Requests</h5>
                                 <h2 class="card-number" id="RejectedLeave">0</h2>
                             </div>
                             <i class="fas fa-times-circle fa-lg"></i> <!-- Font Awesome icon for rejected leave -->
@@ -358,25 +358,25 @@ else
             // Extract relevant data
             const totalApprovedLeave = data.totalApprovedLeave;
             
-            var defaultDaysArray = [];
+            var numberOfDaysArray = [];
 
-            // Iterate over leave allocations and print defaultDays
+            // Iterate over leave allocations and print numberOfDays
             $.each(data.leaveAllocations, function (index, allocation) {
-                var defaultDays = allocation.leaveType.defaultDays;
-                defaultDaysArray.push(defaultDays);
-                $('#defaultDaysList').append('<li>' + defaultDays + '</li>');
+                var numberOfDays = allocation.numberOfDays;
+                numberOfDaysArray.push(numberOfDays);
+                $('#defaultDaysList').append('<li>' + numberOfDays + '</li>');
             });
 
-            var sumDefaultDays = defaultDaysArray.reduce(function (a, b) {
+            var sumNumberOfDays = numberOfDaysArray.reduce(function (a, b) {
                 return a + b;
             }, 0);
             // Calculate remaining leave
-            const remainingLeave =  sumDefaultDays - totalApprovedLeave;
+            const remainingLeave = sumNumberOfDays - totalApprovedLeave;
 
             // Update HTML elements with the calculated values
             document.getElementById('totalApprovedLeave').textContent = totalApprovedLeave;
-            document.getElementById('AllocatedLeave').textContent = sumDefaultDays;
-            document.getElementById('RemainingLeave').textContent = remainingLeave;
+            document.getElementById('PendingLeave').textContent = data.totalPendingLeave;
+            document.getElementById('RemainingLeave').textContent = sumNumberOfDays;
             document.getElementById('RejectedLeave').textContent = data.totalRejectedLeave;
         })
         .catch(error => console.error('Error fetching data:', error));
