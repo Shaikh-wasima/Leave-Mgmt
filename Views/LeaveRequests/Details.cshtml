@@ -5,6 +5,16 @@
 }
 
 
+@if (TempData["ErrorMessageReject"] != null)
+{
+    <div class="alert alert-danger" role="alert">Cannot Reject your own leave request!</div>
+}
+
+@if(TempData["ErrorMessageApprove"] != null)
+{
+    <div class="alert alert-danger" role="alert">Cannot Approve your own leave request!</div>
+}
+
 @if (Model.Approved == null)
 {
     <div class="alert alert-warning" role="alert">
@@ -94,8 +104,8 @@ else
                         </button>
                     </div>
                     <div class="modal-body">
-                        <label for="rejectionMessage">Rejection Reason:</label>
-                        <textarea class="form-control" id="rejectionMessage" rows="3"></textarea>
+                        <label for="rejectionMessage" >Rejection Reason:</label>
+                        <textarea class="form-control" required id="rejectionMessage" rows="3"></textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

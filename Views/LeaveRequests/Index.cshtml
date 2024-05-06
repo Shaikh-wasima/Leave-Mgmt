@@ -138,13 +138,16 @@
                 $('#mytable th').each(function () {
                     header.push($(this).text());
                 });
+                header.pop(); // Remove the last column header
                 csvContent += header.join(",") + "\r\n";
 
                 // Add table data to CSV
                 rows.each(function () {
                     var rowData = [];
-                    $(this).find('td').each(function () {
-                        rowData.push($(this).text());
+                    $(this).find('td').each(function (index) {
+                        if (index !== 7) { // Exclude the last column
+                            rowData.push($(this).text());
+                        }
                     });
                     csvContent += rowData.join(",") + "\r\n";
                 });
