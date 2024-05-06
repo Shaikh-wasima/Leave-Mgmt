@@ -27,5 +27,12 @@ namespace Leave_Management.Controllers
      
             return View();
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddEvent(EventCalendarVM model)
+        {
+                return RedirectToAction(nameof(Index));
+        }
     }
 }
