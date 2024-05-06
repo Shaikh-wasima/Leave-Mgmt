@@ -195,12 +195,12 @@ namespace Leave_Management.Controllers
             var approvedRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == true);
 
             // Calculate total approved leave days
-            
+
             var RejectRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == false);
             var PendingRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == null && x.Cancelled == false);
 
             // Calculate total approved leave days
-            var totalApprovedLeave = approvedRequests.Sum(x => (x.EndDate - x.StartDate).Days + 1);
+            var totalApprovedLeave = approvedRequests.Sum(x => x.TotalDays);
             var totalRejectLeave = RejectRequests.Count();
             var totalPendingLeave = PendingRequests.Count();
 
