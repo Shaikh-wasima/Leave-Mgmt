@@ -19,29 +19,47 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="eventForm">
+                <form id="eventForm" method="post" asp-action="AddEvent">
                     <div class="form-group">
-                        <label for="eventTitle">Event Title:</label>
-                        <input type="text" class="form-control" id="eventTitle" name="eventTitle">
+                        <label asp-for="@Model.Title">Event Title:</label>
+                        <input asp-for="@Model.Title" type="text" class="form-control" id="eventTitle" name="eventTitle">
                     </div>
                     <div class="form-group">
-                        <label for="startDate">Start Date:</label>
-                        <input type="text" class="form-control" id="startDate" name="startDate">
+                        <label asp-for="@Model.StartDate">Start Date:</label>
+                        <input type="text" class="form-control" id="startDate" name="startDate" asp-for="@Model.StartDate">
                     </div>
                     <div class="form-group">
-                        <label for="endDate">End Date:</label>
-                        <input type="text" class="form-control" id="endDate" name="endDate">
+                        <label asp-for="@Model.EndDate">End Date:</label>
+                        <input type="text" class="form-control" id="endDate" name="endDate" asp-for="EndDate">
                     </div>
-                    <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
         var today = new Date().toISOString().slice(0, 10);
+
+        // Fetch existing events from the server
+        var response = await fetch('/EventCalendar/GetEvents');
+        var events = await response.json();
+
+        // Create an array to store the events for the calendar
+        var calendarEvents = [];
+
+        // Populate calendarEvents array with fetched events
+        events.forEach(event => {
+            calendarEvents.push({
+                title: event.title,
+                start: event.startDate,
+                end: event.endDate
+            });
+        });
 
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -50,14 +68,17 @@
             validRange: {
                 start: today
             },
+            events: calendarEvents, // Assign fetched events to the calendar
+
             select: function (info) {
                 var startDate = info.startStr;
                 var endDate = info.endStr;
                 openModal(startDate, endDate);
-            }
+            },
         });
 
         calendar.render();
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -80,41 +101,63 @@
         async function openModal(startDate, endDate) {
             var startDateInput = document.getElementById("startDate");
             var endDateInput = document.getElementById("endDate");
+            
             startDateInput.value = startDate;
             endDateInput.value = endDate;
             modal.style.display = "block";
-
-            // Handle form submission
-            var submitBtn = document.getElementById("submitBtn");
-            submitBtn.onclick = function () {
-                var title = document.getElementById("eventTitle").value;
-                if (title.trim() !== '') {
-                    // Split date range and create events for each day
-                    var start = new Date(startDate);
-                    var end = new Date(endDate);
-                    while (start <= end) {
-                        calendar.addEvent({
-                            title: title,
-                            start: start,
-                            allDay: true
-                        });
-                        start.setDate(start.getDate() + 1);
-                    }
-
-                 
-
-
-
-                    //fetch post to event calendar controller and addevent action method
-                    calendar.render();
-                    modal.style.display = "none";
-                } else {
-                    alert("Please enter event title!");
-                }
-                return false; // Prevent form submission
-            };
         }
+
+        // Handle form submission
+        var submitBtn = document.getElementById("submitBtn");
+        submitBtn.onclick = async function () {
+            event.preventDefault();
+            var title = document.getElementById("eventTitle").value;
+            
+           
+            
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+            
+            if (title.trim() !== '') {
+                await fetch('/EventCalendar/AddEvent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        startDate: startDate,
+                        endDate: endDate,
+                        
+                    })
+                });
+
+                // Clear input fields and close modal
+                document.getElementById("eventTitle").value = '';
+                modal.style.display = "none";
+
+                // Reload events from server
+                var response = await fetch('/EventCalendar/GetEvents');
+                var events = await response.json();
+
+                // Clear existing events on calendar
+                calendar.removeAllEvents();
+
+                // Add retrieved events to calendar
+                events.forEach(event => {
+                    calendar.addEvent({
+                        title: event.title,
+                        start: event.startDate,
+                        end: event.endDate
+                    });
+                });
+
+                // Render calendar with updated events
+                calendar.render();
+            } else {
+                alert("Please enter event title!");
+            }
+            return false; // Prevent form submission
+        };
     });
 </script>
-
-

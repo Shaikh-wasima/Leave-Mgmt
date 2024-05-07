@@ -11,7 +11,13 @@ namespace Leave_Management.Data
 
         [ForeignKey("RequestingEmployeeId")]
         public Employee RequestingEmployee { get; set; }
-        public string RequestingEmployeeId { get; set; } = string.Empty;
+        public string RequestingEmployeeId { get; set; }
+
+
+    
+
+
+
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 

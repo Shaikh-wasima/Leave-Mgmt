@@ -10,6 +10,7 @@ namespace Leave_Management.Contracts
         ILeaveTypeRepository LeaveType { get; }
         ILeaveRequestRepository LeaveRequest { get; }
         ILeaveAllocationRepository LeaveAllocation { get; }
+        IEventsRepository Events { get; }
         void Save();
     }
 }
