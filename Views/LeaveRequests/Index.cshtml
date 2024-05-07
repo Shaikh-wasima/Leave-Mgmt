@@ -88,7 +88,7 @@
                 // Add table headers to CSV
                 var header = [];
                 $('#mytable th').each(function () {
-                    header.push($(this).text());
+                    header.push($(this).text().replace(/[\r\n]+/g, ''));
                 });
                 header.pop(); // Remove the last column header
                 csvContent += header.join(",") + "\r\n";
@@ -98,7 +98,7 @@
                     var rowData = [];
                     $(this).find('td').each(function (index) {
                         if (index !== 7) { // Exclude the last column
-                            rowData.push($(this).text());
+                            rowData.push($(this).text().replace(/[\r\n]+/g, ''));
                         }
                     });
                     csvContent += rowData.join(",") + "\r\n";
