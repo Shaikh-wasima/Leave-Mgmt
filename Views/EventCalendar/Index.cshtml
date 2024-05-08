@@ -22,15 +22,15 @@
                 <form id="eventForm" method="post" asp-action="AddEvent">
                     <div class="form-group">
                         <label asp-for="@Model.Title">Event Title:</label>
-                        <input asp-for="@Model.Title" type="text" class="form-control" id="eventTitle" name="eventTitle">
+                        <input type="text" class="form-control" id="eventTitle" name="eventTitle">
                     </div>
                     <div class="form-group">
                         <label asp-for="@Model.StartDate">Start Date:</label>
-                        <input type="text" class="form-control" id="startDate" name="startDate" asp-for="@Model.StartDate">
+                        <input type="text" class="form-control" id="startDate" name="startDate" >
                     </div>
                     <div class="form-group">
                         <label asp-for="@Model.EndDate">End Date:</label>
-                        <input type="text" class="form-control" id="endDate" name="endDate" asp-for="EndDate">
+                        <input type="text" class="form-control" id="endDate" name="endDate" >
                     </div>
                     <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
                 </form>
@@ -69,7 +69,6 @@
                 start: today
             },
             events: calendarEvents, // Assign fetched events to the calendar
-
             select: function (info) {
                 var startDate = info.startStr;
                 var endDate = info.endStr;
@@ -107,57 +106,73 @@
             modal.style.display = "block";
         }
 
-        // Handle form submission
         var submitBtn = document.getElementById("submitBtn");
         submitBtn.onclick = async function () {
             event.preventDefault();
-            var title = document.getElementById("eventTitle").value;
-            
-           
-            
+
+            // Get form data
+            var title = document.getElementById("eventTitle").value.trim();
             var startDate = document.getElementById("startDate").value;
             var endDate = document.getElementById("endDate").value;
-            
-            if (title.trim() !== '') {
-                await fetch('/EventCalendar/AddEvent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title: title,
-                        startDate: startDate,
-                        endDate: endDate,
-                        
-                    })
-                });
 
-                // Clear input fields and close modal
-                document.getElementById("eventTitle").value = '';
-                modal.style.display = "none";
+            // Convert dates to Date objects
+            var startDateObj = new Date(startDate);
+            var endDateObj = new Date(endDate);
+            var todayObj = new Date(today);
 
-                // Reload events from server
-                var response = await fetch('/EventCalendar/GetEvents');
-                var events = await response.json();
-
-                // Clear existing events on calendar
-                calendar.removeAllEvents();
-
-                // Add retrieved events to calendar
-                events.forEach(event => {
-                    calendar.addEvent({
-                        title: event.title,
-                        start: event.startDate,
-                        end: event.endDate
-                    });
-                });
-
-                // Render calendar with updated events
-                calendar.render();
-            } else {
+            // Validation checks
+            if (title === '') {
                 alert("Please enter event title!");
+                return false;
             }
-            return false; // Prevent form submission
+
+            if (startDateObj < todayObj || endDateObj < todayObj) {
+                alert("Start date and End date cannot be in the past.");
+                return false;
+            }
+
+            if (endDateObj < startDateObj) {
+                alert("End date cannot be earlier than start date.");
+                return false;
+            }
+
+            // Submit the event if validation passes
+            await fetch('/EventCalendar/AddEvent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    startDate: startDate,
+                    endDate: endDate
+                })
+            });
+
+            // Clear input fields and close modal
+            document.getElementById("eventTitle").value = '';
+            modal.style.display = "none";
+
+            // Reload events from server
+            var response = await fetch('/EventCalendar/GetEvents');
+            var events = await response.json();
+
+            // Clear existing events on calendar
+            calendar.removeAllEvents();
+
+            // Add retrieved events to calendar
+            events.forEach(event => {
+                calendar.addEvent({
+                    title: event.title,
+                    start: event.startDate,
+                    end: event.endDate
+                });
+            });
+
+            // Render calendar with updated events
+            calendar.render();
+
+            return false; // Prevent default form submission
         };
     });
 </script>
