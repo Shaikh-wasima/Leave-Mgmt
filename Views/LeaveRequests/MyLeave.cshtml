@@ -136,7 +136,23 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $('#tbldata').DataTable();
+            var table = $('#tbldata').DataTable();
+
+            function getQueryParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Check if there's a 'filter' query parameter and set the value accordingly
+            const searchValue = getQueryParameter("filter");
+
+            if (searchValue) {
+                // Set the search input value
+                var searchInput = $('#tbldata_filter input');
+                searchInput.val(searchValue);
+
+                searchInput.trigger($.Event('keyup', { keyCode: 13 }));
+            }
         });
     </script>
 } 

@@ -78,7 +78,7 @@
     <!-- Your existing script section -->
     <script>
         $(document).ready(function () {
-            $('#mytable').dataTable();
+            var table = $('#mytable').dataTable();
 
             $('#exportButton').click(function () {
                 // Get all rows from table
@@ -112,6 +112,24 @@
                 document.body.appendChild(link);
                 link.click();
             });
+
+            function getQueryParameter(name) { 
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Check if there's a 'filter' query parameter and set the value accordingly
+            const searchValue = getQueryParameter("filter");
+
+            if (searchValue) {
+                // Set the search input value
+                var searchInput = $('#mytable_filter input');
+                searchInput.val(searchValue);
+
+                searchInput.trigger($.Event('keyup', { keyCode: 13 }));
+            }
+
+            
         });
     </script>
 }
