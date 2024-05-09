@@ -1,12 +1,31 @@
-﻿{
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:7554",
-      "sslPort": 44389
-    }
-  },
+﻿//{
+//  "iisSettings": {
+//    "windowsAuthentication": false,
+//    "anonymousAuthentication": true,
+//    "iisExpress": {
+//      "applicationUrl": "http://localhost:7554",
+//      "sslPort": 44389
+//    }
+//  },
+//  "profiles": {
+//    "IIS Express": {
+//      "commandName": "IISExpress",
+//      "launchBrowser": true,
+//      "environmentVariables": {
+//        "ASPNETCORE_ENVIRONMENT": "Development"
+//      }
+//    },
+//    "Leave_Management": {
+//      "commandName": "Project",
+//      "launchBrowser": true,
+//      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+//      "environmentVariables": {
+//        "ASPNETCORE_ENVIRONMENT": "Development"
+//      }
+//    }
+//  }
+//}
+{
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -15,13 +34,23 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Leave_Management": {
-      "commandName": "Project",
+    "IIS Local CIPULL": {
+      "commandName": "IIS",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "http://leave.wasima.net"
     }
+
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:7554",
+      "sslPort": 44389
+    },
+    "iis": { "applicationUrl": "http://leave.wasima.net" }
   }
 }

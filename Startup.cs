@@ -32,7 +32,12 @@ namespace Leave_Management
             //        Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure();
+                    }
+                    ));
             services.AddDefaultIdentity<Employee>()
                 .AddRoles<UserRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
