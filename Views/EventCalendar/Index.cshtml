@@ -178,9 +178,11 @@
 
             // Render calendar with updated events
             calendar.render();
+            $('.fc-event-time').html("");
 
             return false; // Prevent default form submission
         };
+        $('.fc-event-time').html("");
     });
 </script>
 
