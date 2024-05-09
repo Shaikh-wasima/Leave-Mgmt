@@ -163,7 +163,7 @@
     }
 
 
-    <div class="container-fluid mt-4">
+    <div class="container mt-4">
         <h2 class="text-center">Calendar</h2>
         <div id="calendar"></div>
     </div>
@@ -171,7 +171,7 @@
     <div class="container-fluid mt-4 text-center">
         <div class="border rounded p-4">
             <h3>Holidays</h3>
-            <table class="table table-striped table-bordered">
+            <table id="holidayTable" class="table table-striped table-bordered">
                 <thead class="thead-dark">
                     <tr>
                         <th>Sr. No.</th>
@@ -180,68 +180,7 @@
                         <th>Day</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>New Year</td>
-                        <td>01st January</td>
-                        <td>Monday</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Republic Day</td>
-                        <td>26th January</td>
-                        <td>Friday</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Maha Shivaratri</td>
-                        <td>8th March</td>
-                        <td>Friday</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Holi</td>
-                        <td>25th March</td>
-                        <td>Monday</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Ramzan Id (Id – Ul- Fitar)</td>
-                        <td>11th April</td>
-                        <td>Thursday (may vary depending on the moon sight)</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Maharashtra Day</td>
-                        <td>01st May</td>
-                        <td>Wednesday</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>Independence Day</td>
-                        <td>15th August</td>
-                        <td>Thursday</td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>Mahatma Gandhi Jayanti</td>
-                        <td>02nd October</td>
-                        <td>Wednesday</td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>Diwali</td>
-                        <td>01st November</td>
-                        <td>Friday</td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>Christmas</td>
-                        <td>25th December</td>
-                        <td>Wednesday</td>
-                    </tr>
-                </tbody>
+                <tbody id="holidayTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -332,8 +271,6 @@ else
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
-
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -383,6 +320,42 @@ else
 </script>
 
 
+<script>
+    // Define holiday data
+    const holidays = [
+        { name: "New Year", date: "01st January", day: "Monday" },
+        { name: "Republic Day", date: "26th January", day: "Friday" },
+        { name: "Maha Shivaratri", date: "8th March", day: "Friday" },
+        { name: "Holi", date: "25th March", day: "Monday" },
+        { name: "Ramzan Id (Id – Ul- Fitar)", date: "11th April", day: "Thursday (may vary depending on the moon sight)" },
+        { name: "Maharashtra Day", date: "01st May", day: "Wednesday" },
+        { name: "Independence Day", date: "15th August", day: "Thursday" },
+        { name: "Mahatma Gandhi Jayanti", date: "02nd October", day: "Wednesday" },
+        { name: "Diwali", date: "01st November", day: "Friday" },
+        { name: "Christmas", date: "25th December", day: "Wednesday" }
+    ];
+
+    // Function to populate holiday table
+    function populateHolidayTable() {
+        const holidayTableBody = document.getElementById('holidayTableBody');
+        holidays.forEach((holiday, index) => {
+            const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${holiday.name}</td>
+                        <td>${holiday.date}</td>
+                        <td>${holiday.day}</td>
+                    </tr>
+                `;
+            holidayTableBody.innerHTML += row;
+        });
+    }
+
+    // Call the function to populate the table
+    populateHolidayTable();
+</script>
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -406,6 +379,7 @@ else
 </div>
 
 <style>
+
     #calendar {
         width: 69%;
         margin: 0 auto;

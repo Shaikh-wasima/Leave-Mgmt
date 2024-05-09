@@ -4,8 +4,15 @@
 @using Microsoft.AspNetCore.Identity;
 @inject IUnitOfWork _uow;
 
+
+@{
+    ViewData["Title"] = "Event Calendar";
+}
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
+
+<h1 class="text-center display-6">Events Calendar</h1>
 <div id="calendar"></div>
 
 <!-- Modal -->
@@ -176,3 +183,10 @@
         };
     });
 </script>
+
+<style>
+    #calendar {
+        width: 69%;
+        margin: 0 auto;
+    }
+</style>
