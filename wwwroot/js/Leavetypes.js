@@ -37,7 +37,6 @@ function loadDataTable() {
 }
 
 
-
 function Delete(url) {
     $.ajax({
         type: "DELETE",

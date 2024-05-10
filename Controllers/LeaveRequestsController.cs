@@ -345,6 +345,7 @@ namespace Leave_Management.Controllers
                 if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
+
                 }
                 else if (daysRequested > allocation.NumberOfDays)
                 {
@@ -359,6 +360,7 @@ namespace Leave_Management.Controllers
                 {
                     ModelState.AddModelError("", "Start Date and End Date cannot be in the past.");
                 }
+                
 
 
 
