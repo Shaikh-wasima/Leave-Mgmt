@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Leave_Management.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,5 +28,7 @@ namespace Leave_Management.Data
         public string ApprovedById { get; set; }
 
         public string? RejectionMessage { get; set; }
+
+        public int TotalDays => Helper.CalculateTotalDaysExcludingWeekends(StartDate, EndDate);
     }
 }

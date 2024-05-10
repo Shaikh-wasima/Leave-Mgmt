@@ -34,17 +34,18 @@ namespace Leave_Management.Controllers
         }
 
         // GET: LeaveRequests
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Manager")]
         public ActionResult Index()
         {
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = leaveRequestModel.Count(x => x.Approved == null) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
                 LeaveRequest = leaveRequestModel
             };
@@ -62,19 +63,32 @@ namespace Leave_Management.Controllers
 
 
 
-        public async Task<IActionResult> RejectionMessage(int id)
-        {
-            var leaveRequest = await _uow.LeaveRequest.GetAllWithThreeEntity((x => x.Id == id), includeProperties: "ApprovedBy", includeProperty: "RequestingEmployee", includeProperte: "LeaveType");
-            var model = _mapper.Map<LeaveRequestVm>(leaveRequest);
-            return View(model);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> RejectionMessage(int id)
+        //{
+        //    var leaveRequest = await _uow.LeaveRequest.Get(id);
+        //    var model = _mapper.Map<LeaveRequestVm>(leaveRequest);
+        //    return View(model);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> RMPost(int id)
-        {
-            await RejectRequest(id);
-            return RedirectToAction("Index", "LeaveRequests");
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> RejectionMessage(LeaveRequestVm model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+        //    var leaveRequest = await _uow.LeaveRequest.Get(model.Id);
+        //    leaveRequest.RejectionMessage = model.RejectionMessage;
+
+        //    _uow.LeaveRequest.Update(leaveRequest);
+        //    _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
+        //    return RedirectToAction("Index", "LeaveRequests");
+        //}
+
+
 
 
 
@@ -84,6 +98,11 @@ namespace Leave_Management.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 var leaveRequest = await _uow.LeaveRequest.Get(id);
+                if (leaveRequest.RequestingEmployeeId == user.Id)
+                {
+                    TempData["ErrorMessageApprove"] = "You cannot approve your own leave request!";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
                 var employeeId = leaveRequest.RequestingEmployeeId;
                 var leaveTypeId = leaveRequest.LeaveTypeId;
                 var allocation = await _uow.LeaveAllocation.GetAllWithTwoEntity((x =>
@@ -117,31 +136,108 @@ namespace Leave_Management.Controllers
             }
         }
 
-        public async Task<ActionResult> RejectRequest(int id)
+        public async Task<ActionResult> RejectRequest(int id, string rejectionMessage)
         {
             try
             {
+                //if(rejectionMessage == null)
+                //{
+                //    TempData["EmptyRejectionMessage"] = "Rejection message cannot be empty!";
+                //    return RedirectToAction(nameof(Details), new {id = id});
+                //}
                 var user = await _userManager.GetUserAsync(User);
-                var leaveRequest = await _uow.LeaveRequest.Get(id);
-                leaveRequest.Approved = false;
-                leaveRequest.ApprovedById = user.Id;
-                leaveRequest.DateActioned = DateTime.Now;
 
-                _uow.LeaveRequest.Update(leaveRequest);
-                _uow.Save();
-                return RedirectToAction(nameof(Index));
+                var leaveRequest = await _uow.LeaveRequest.Get(id);
+                if(leaveRequest.RequestingEmployeeId != user.Id)
+                {
+                    leaveRequest.Approved = false;
+                    leaveRequest.ApprovedById = user.Id;
+                    leaveRequest.DateActioned = DateTime.Now;
+                    leaveRequest.RejectionMessage = rejectionMessage; // Set rejection message
+
+                    _uow.LeaveRequest.Update(leaveRequest);
+                    _uow.Save(); // Assuming SaveAsync is an asynchronous save method
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["ErrorMessageReject"] = "You cannot reject your own leave request!";
+                    return RedirectToAction(nameof(Details), new {id = id});
+                }
+               
             }
             catch (Exception ex)
             {
+                // Handle exception
                 return RedirectToAction(nameof(Index));
             }
         }
 
 
+
         public ActionResult MyLeave()
         {
             var employee = _userManager.GetUserAsync(User).Result;
+            if (employee == null)
+            {
+                return View();
+            }
+
             var employeeId = employee.Id;
+
+            // Retrieve all approved leave requests for the employee
+            var approvedRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == true);
+
+            // Calculate total approved leave days
+            var totalApprovedLeave = approvedRequests.Sum(x => (x.EndDate - x.StartDate).Days + 1);
+
+
+
+            // Rest of your code
+            var employeeAllocation = _uow.LeaveAllocation.GetAll(includeProperties: "LeaveType")
+                .Where(x => x.EmployeeId == employeeId && x.Period == DateTime.Now.Year)
+                .ToList();
+
+
+            var employeeRequest = _uow.LeaveRequest.GetAll((x => x.RequestingEmployeeId == employeeId),
+                includeProperties: "LeaveType", includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
+            var employeeAllocationModel = _mapper.Map<List<LeaveAllocationVm>>(employeeAllocation);
+            var employeeRequestModel = _mapper.Map<List<LeaveRequestVm>>(employeeRequest);
+
+            var model = new EmployeeLeaveRequestVm
+            {
+                LeaveAllocations = employeeAllocationModel,
+                LeaveRequests = employeeRequestModel,
+                TotalApprovedLeave = totalApprovedLeave // Add total approved leave to the model
+            };
+
+            return View(model);
+        }
+
+        public ActionResult MyLeaveGet()
+        {
+            var employee = _userManager.GetUserAsync(User).Result;
+            if(employee == null)
+            {
+                return NotFound();
+            }
+            var employeeId = employee.Id;
+
+            // Retrieve all approved leave requests for the employee
+            var approvedRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == true);
+
+            // Calculate total approved leave days
+
+            var RejectRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == false);
+            var PendingRequests = _uow.LeaveRequest.GetAll(x => x.RequestingEmployeeId == employeeId && x.Approved == null && x.Cancelled == false);
+
+            // Calculate total approved leave days
+            var totalApprovedLeave = approvedRequests.Sum(x => x.TotalDays);
+            var totalRejectLeave = RejectRequests.Count();
+            var totalPendingLeave = PendingRequests.Count();
+
+            // Rest of your code
             var employeeAllocation = _uow.LeaveAllocation.GetAll(includeProperties: "LeaveType")
                 .Where(x => x.EmployeeId == employeeId && x.Period == DateTime.Now.Year)
                 .ToList();
@@ -153,8 +249,20 @@ namespace Leave_Management.Controllers
             var model = new EmployeeLeaveRequestVm
             {
                 LeaveAllocations = employeeAllocationModel,
-                LeaveRequests = employeeRequestModel
+                LeaveRequests = employeeRequestModel,
+                TotalApprovedLeave = totalApprovedLeave, // Add total approved leave to the model
+                TotalRejectedLeave = totalRejectLeave,
+                TotalPendingLeave = totalPendingLeave
             };
+
+            // Return the model as JSON
+            return Json(model);
+        }
+
+        public ActionResult Dashboard()
+        {
+            // Retrieve employee's leave information
+            var model = MyLeave();
 
             return View(model);
         }
@@ -195,11 +303,30 @@ namespace Leave_Management.Controllers
                 var endDate = Convert.ToDateTime(collection.EndDate);
                 var employee = await _userManager.GetUserAsync(User);
 
+                var overlappingRequests = _uow.LeaveRequest.GetAll().Where(lr =>
+                lr.RequestingEmployeeId == employee.Id &&
+                lr.Cancelled == false &&
+                lr.StartDate <= endDate &&
+                lr.EndDate >= startDate);
+
+                if (overlappingRequests.Any())
+                {
+                    ModelState.AddModelError("", "You already have leave request(s) overlapping with the selected dates.");
+                }
+
                 var allocation = await _uow.LeaveAllocation.GetAllWithTwoEntity((x =>
                     x.EmployeeId == employee.Id && x.Period == DateTime.Now.Year &&
                     x.LeaveType.Id == collection.LeaveTypeId));
 
-                int dayRequested = (int)(endDate - startDate).TotalDays;
+                int daysRequested = (int)(endDate - startDate).TotalDays + 1;
+                for (int i = 0; i < daysRequested; i++)
+                {
+                    var currentDate = startDate.AddDays(i);
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        daysRequested--;
+                    }
+                }
 
 
                 var leaveTypes = _uow.LeaveType.GetAll();
@@ -210,7 +337,6 @@ namespace Leave_Management.Controllers
                 });
                 collection.LeaveTypes = leaveTypesItem;
 
-
                 if (collection.LeaveTypeId == 0)
                 {
                     ModelState.AddModelError("", "Please Select Leave Type");
@@ -219,20 +345,25 @@ namespace Leave_Management.Controllers
                 if (allocation == null)
                 {
                     ModelState.AddModelError("", "You Have No Days Left");
-                }else if (dayRequested > allocation.NumberOfDays)
+
+                }
+                else if (daysRequested > allocation.NumberOfDays)
                 {
                     ModelState.AddModelError("", "You Do Not Have Sufficient Days For This Request");
                 }
-                else if (DateTime.Compare(startDate, endDate) > 0)
+
+                if (DateTime.Compare(startDate, endDate) > 0)
                 {
                     ModelState.AddModelError("", "Start Date cannot be further in the future than the End Date");
                 }
+                else if (startDate.Date < DateTime.Today || endDate.Date < DateTime.Today)
+                {
+                    ModelState.AddModelError("", "Start Date and End Date cannot be in the past.");
+                }
                 
 
-                if (startDate.Date < DateTime.Now.Date)
-                {
-                    ModelState.AddModelError("", "Start Date cannot be in the past");
-                }
+
+
 
                 if (!ModelState.IsValid)
                 {
@@ -269,11 +400,12 @@ namespace Leave_Management.Controllers
             var leaveRequest = _uow.LeaveRequest.GetAll(includeProperties: "LeaveType",
                 includeProperty: "RequestingEmployee", includeProperte: "ApprovedBy");
             var leaveRequestModel = _mapper.Map<List<LeaveRequestVm>>(leaveRequest);
+            var cancelled = leaveRequest.Count(x => x.Cancelled == true);
             var model = new AdminLeaveRequestVm
             {
                 TotalRequest = leaveRequestModel.Count,
                 ApprovedRequest = leaveRequestModel.Count(x => x.Approved == true),
-                PendingRequest = leaveRequestModel.Count(x => x.Approved == null),
+                PendingRequest = leaveRequestModel.Count(x => x.Approved == null) - cancelled,
                 RejectedRequest = leaveRequestModel.Count(x => x.Approved == false),
                 LeaveRequest = leaveRequestModel
             };

@@ -7,27 +7,29 @@
 <h1 class="text-center">Create Employee</h1>
 <hr />
 
+
+
 <div class="row">
     <div class="col-md-4 mx-auto p-5">
-        <form asp-action="CreateEmployee" method="post">
+        <form asp-action="CreateEmployee" method="post" id="createEmployeeForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
 
             <div class="form-group">
                 <label asp-for="Firstname" class="control-label"></label>
-                <input asp-for="Firstname" class="form-control" />
+                <input type="text" asp-for="Firstname" class="form-control" />
                 <span asp-validation-for="Firstname" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Lastname" class="control-label"></label>
-                <input asp-for="Lastname" class="form-control" />
+                <input type="text" asp-for="Lastname" class="form-control" />
                 <span asp-validation-for="Lastname" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input type="email" asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,28 +37,19 @@
                 <input asp-for="Discriminator" class="form-control" value="Employee" type="hidden"/>
                 <span asp-validation-for="Discriminator" class="text-danger"></span>
             </div>
-
-            
-
-         
                 <input asp-for="UserName" class="form-control" type="hidden" />
-                
-            
-            
-                
-                
-    
 
             <div class="form-group">
-                <button type="submit" class="btn btn-success">Create</button>
+                <button id="createEmployeeBtn" type="submit" class="btn btn-success">Create</button>
                 <a asp-action="ListEmployee" class="btn btn-outline-primary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
+
 @section Scripts {
-    @{
+<script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    </script>
 }

@@ -5,7 +5,7 @@
 }
 
 <div class="container">
-    <h1 class="text-center">Details For @Model.Employee.Firstname @Model.Employee.Lastname</h1>
+    <h1 class="text-center display-6">Details For @Model.Employee.Firstname @Model.Employee.Lastname</h1>
     <hr />
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
@@ -19,10 +19,6 @@
                     <td>@Html.DisplayFor(model => model.Employee.Email)</td>
                 </tr>
                 <tr>
-                    <th class="text-center">Phone Number:</th>
-                    <td>@Html.DisplayFor(model => model.Employee.PhoneNumber)</td>
-                </tr>
-                <tr>
                     <th class="text-center">First Name:</th>
                     <td>@Html.DisplayFor(model => model.Employee.Firstname)</td>
                 </tr>
@@ -30,18 +26,8 @@
                     <th class="text-center">Last Name:</th>
                     <td>@Html.DisplayFor(model => model.Employee.Lastname)</td>
                 </tr>
-                <tr>
-                    <th class="text-center">Tax ID:</th>
-                    <td>@Html.DisplayFor(model => model.Employee.TaxId)</td>
-                </tr>
-                <tr>
-                    <th class="text-center">Date of Birth:</th>
-                    <td>@Html.DisplayFor(model => model.Employee.DateOfBirth)</td>
-                </tr>
-                <tr>
-                    <th class="text-center">Date Joined:</th>
-                    <td>@Html.DisplayFor(model => model.Employee.DateJoined)</td>
-                </tr>
+             
+               
             </tbody>
         </table>
     </div>
@@ -51,22 +37,34 @@
 
 @if (Model.LeaveAllocationVms.Any())
 {
-    <h2 >Leave Allocations</h2>
-    <div class="card align-content-center" style="width: 18rem">
-        <ul class="list-group list-group-flush">
-            @foreach (var item in Model.LeaveAllocationVms)
-            {
-                <li class="list-group-item">
-                    <h6>
-                        @item.LeaveType.Name <span class="badge badge-secondary">@item.NumberOfDays</span>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary"><i class="fas fa-edit"></i>Edit</a>
-                    </h6>
-                </li>
-            }
-        </ul>
+    <h2 class="text-center display-6">Leave Allocations</h2>
+    <div class="table-responsive container text-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Number of Days</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.LeaveAllocationVms)
+                {
+                    <tr>
+                        <td>@item.LeaveType.Name</td>
+                        <td><span class="badge badge-secondary">@item.NumberOfDays</span></td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+            <a class="btn btn-outline-secondary" asp-action="ListEmployee">Back to List</a>
     </div>
 }
-<div>
 
-    <a class="btn btn-outline-secondary" asp-action="ListEmployee">Back to List</a>
-</div>
+
+
+

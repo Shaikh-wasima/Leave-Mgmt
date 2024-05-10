@@ -20,9 +20,7 @@ function loadDataTable() {
                                 <a href="/leaveTypes/Create/${data}" class="btn btn-warning text-white" style="cursor:pointer">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                                <a href="/leaveTypes/Details/${data}" class="btn btn-primary text-white" style="cursor:pointer">
-                                    <i class="fas fa-info-circle"></i> 
-                                </a>
+                                
                                 <a onclick=Delete("/leaveTypes/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer">
                                     <i class="fas fa-trash-alt"></i> 
                                 </a>

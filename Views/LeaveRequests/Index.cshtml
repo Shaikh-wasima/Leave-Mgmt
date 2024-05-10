@@ -5,107 +5,44 @@
 }
 
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-info"><i class="fas fa-tachometer-alt"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">@Model.TotalRequest</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.TotalRequest)</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
 
-    </div>
-    <div class="col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-warning"><i class="fas fa-exclamation-circle"></i></span>
 
-            <div class="info-box-content">
-                <span class="info-box-text">@Model.PendingRequest</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.PendingRequest)</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
 
-    </div>
-    <div class="col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-success"><i class="far fa-check-circle"></i></span>
+<button id="exportButton" class="btn btn-primary">
+    <i class="fas fa-download"></i> Export to CSV
+</button>
 
-            <div class="info-box-content">
-                <span class="info-box-text">@Model.ApprovedRequest</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.ApprovedRequest)</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
 
-    </div>
-    <div class="col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-danger"><i class="far fa-times-circle"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">@Model.RejectedRequest</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.RejectedRequest)</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-
-    </div>
-</div>
-
-<br />
-<br />
 
 <hr />
 <h1>Leave Request Log</h1>
 <hr />
 <table id="mytable" class="table">
+    <!-- Table headers -->
     <thead>
         <tr>
-            <th>
-                Employee Name
-            </th>
-            <th>
-                Start Date
-            </th>
-            <th>
-                End Date
-            </th>
-            <th>
-                Leave Type
-            </th>
-            <th>
-                Date Requested
-            </th>
-
-            <th>
-                Approval Status
-            </th>
-
+            <th>Employee Name</th>
+            <th>Total Days</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Leave Type</th>
+            <th>Date Requested</th>
+            <th>Approval Status</th>
             <th></th>
         </tr>
     </thead>
+    <!-- Table body -->
     <tbody>
         @foreach (var item in Model.LeaveRequest)
         {
+            <!-- Table rows -->
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RequestingEmployee.Firstname) @Html.DisplayFor(modelItem => item.RequestingEmployee.Lastname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LeaveType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateRequested)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.RequestingEmployee.Firstname) @Html.DisplayFor(modelItem => item.RequestingEmployee.Lastname)</td>
+                <td>@Html.DisplayFor(modelItem => item.TotalDays)</td>
+                <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.LeaveType.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.DateRequested)</td>
                 <td>
                     @if (item.Cancelled)
                     {
@@ -131,8 +68,6 @@
                             <i class="fa fa-file"></i>Review
                         </a>
                     }
-
-
                 </td>
             </tr>
         }
@@ -140,9 +75,61 @@
 </table>
 
 @section Scripts{
+    <!-- Your existing script section -->
     <script>
         $(document).ready(function () {
-            $('#mytable').dataTable();
+            var table = $('#mytable').dataTable();
+
+            $('#exportButton').click(function () {
+                // Get all rows from table
+                var rows = $('#mytable tbody tr');
+                var csvContent = "data:text/csv;charset=utf-8,";
+
+                // Add table headers to CSV
+                var header = [];
+                $('#mytable th').each(function () {
+                    header.push($(this).text().replace(/[\r\n]+/g, ''));
+                });
+                header.pop(); // Remove the last column header
+                csvContent += header.join(",") + "\r\n";
+
+                // Add table data to CSV
+                rows.each(function () {
+                    var rowData = [];
+                    $(this).find('td').each(function (index) {
+                        if (index !== 7) { // Exclude the last column
+                            rowData.push($(this).text().replace(/[\r\n]+/g, ''));
+                        }
+                    });
+                    csvContent += rowData.join(",") + "\r\n";
+                });
+
+                // Create a download link and click it to start downloading
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "leave_requests.csv");
+                document.body.appendChild(link);
+                link.click();
+            });
+
+            function getQueryParameter(name) { 
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Check if there's a 'filter' query parameter and set the value accordingly
+            const searchValue = getQueryParameter("filter");
+
+            if (searchValue) {
+                // Set the search input value
+                var searchInput = $('#mytable_filter input');
+                searchInput.val(searchValue);
+
+                searchInput.trigger($.Event('keyup', { keyCode: 13 }));
+            }
+
+            
         });
     </script>
 }

@@ -61,12 +61,12 @@ namespace Leave_Management.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
             [Required]
             [DataType(DataType.Text)]
-            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+            [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Invalid First Name, Please Enter A Valid First Name.")]
             [Display(Name = "First Name")]
             public string Firstname { get; set; }
             [Required]
             [DataType(DataType.Text)]
-            [RegularExpression(@"^[^\d]+$", ErrorMessage = "Name cannot contain numbers")]
+            [RegularExpression(@"^[a-zA-Z ]+$", ErrorMessage = "Invalid Last Name, Please Enter A Valid Last Name.")]
 
             [Display(Name = "Last Name")]
             public string Lastname { get; set; }
@@ -96,6 +96,7 @@ namespace Leave_Management.Areas.Identity.Pages.Account
                     Discriminator = Input.Discriminator
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -125,7 +126,7 @@ namespace Leave_Management.Areas.Identity.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty,error.Description);
                 }
             }
 

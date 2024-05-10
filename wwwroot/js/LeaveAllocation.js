@@ -9,13 +9,14 @@ function loadDataTable() {
     $('#tblData').DataTable({
         "ajax": {
             "url": "/LeaveAllocations/GetAll",
-            "dataSrc": "data" // Assuming the JSON data is wrapped in a "data" key
+            "dataSrc": "data" 
         },
         "columns": [
             { "data": "firstname", "width": "15%" },
             { "data": "lastname", "width": "15%" },
-            { "data": "email", "width": "30%" },
+            { "data": "email", "width": "20%" },
             { "data": "role", "width": "15%" },
+            { "data": "managerName", "width": "20%" },
             
             {
                 "data": "id",
@@ -28,7 +29,7 @@ function loadDataTable() {
                         </div>
                     `;
                 },
-                "width": "10%"
+                "width": "15%"
             }
         ],
         "language": {

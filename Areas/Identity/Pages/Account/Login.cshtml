@@ -23,7 +23,7 @@
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
-                <p class="login-box-msg">Sign in <strong>Core Leave Management</strong></p>
+                <p class="login-box-msg">Sign in <strong>Leave Management</strong></p>
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <form id="account" method="post">
                     <div class="input-group mb-3">
@@ -36,11 +36,16 @@
                     </div>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                     <div class="input-group mb-3">
-                        <input asp-for="Input.Password" class="form-control" />
+                        <input asp-for="Input.Password" class="form-control" type="password" id="passwordInput" />
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <span class="fas fa-eye"></span>
+                            </button>
                         </div>
                     </div>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
@@ -61,9 +66,7 @@
                     </div>
                 </form>
 
-                <p class="mb-1">
-                    <a asp-page="ForgetPassword" >I forgot my password</a>
-                </p>
+
                 <p class="mb-0">
                     <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-center">Register a new membership</a>
                 </p>
@@ -78,3 +81,14 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        var passwordInput = document.getElementById("passwordInput");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    });
+</script>
